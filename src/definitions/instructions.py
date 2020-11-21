@@ -120,6 +120,19 @@ class JumpInstruction(Instruction):
         print(f"Jump {self.arg}")
 
 
+class PauseInstruction(Instruction):
+
+    opcode = Opcode.PAUSE
+
+    def __init__(self, arg: int):
+        super().__init__(arg)
+
+    def execute(self):
+        input("Press ENTER to continue... ")
+        print("Execution will resume in 5 seconds")
+        sleep(5)
+
+
 class WaitInstruction(Instruction):
 
     opcode = Opcode.WAIT

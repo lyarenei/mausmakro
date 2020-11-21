@@ -64,6 +64,9 @@ class Builder:
         elif opcode == Opcode.JUMP:
             return JumpInstruction(arg)
 
+        elif opcode == Opcode.PAUSE:
+            return PauseInstruction(arg)
+
         elif opcode == Opcode.WAIT:
             return WaitInstruction(arg)
 

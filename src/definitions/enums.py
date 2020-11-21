@@ -15,6 +15,7 @@ class Opcode(EqualEnum):
     DOUBLE_CLICK = 'double_click'
     FIND = 'find'
     JUMP = 'jump'
+    PAUSE = 'pause'
     WAIT = 'wait'
 
 
