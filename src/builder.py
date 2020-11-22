@@ -75,9 +75,8 @@ class Builder:
                 f"Instruction {instruction} not implemented!")
 
     def parse_conditional(self, conditional: List[Tree]) -> Conditional:
-        instruction = self.parse_instruction(conditional[0])
         cond = Conditional()
-        cond.condition = instruction
+        cond.condition = self.parse_instruction(conditional[0])
         cond.body = self.parse_body(conditional[1])
 
         if len(conditional) > 2:
@@ -107,7 +106,7 @@ class Builder:
                 instr = self.parse_instruction(child.children[0])
                 body.append(instr)
 
-            elif child.data == 'conditional':
+            else:
                 cond = self.parse_conditional(child.children)
                 body.append(cond)
 
