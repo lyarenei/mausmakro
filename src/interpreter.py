@@ -64,8 +64,8 @@ class Interpreter:
         macro = self._get_macro(macro_name)
         loops = 0
         while True:
-            print(f"Iteration: {loops}")
             if repeats >= 0:
+                print(f"Iteration: {loops}")
                 loops += 1
                 if loops > repeats:
                     break
