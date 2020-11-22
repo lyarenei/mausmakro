@@ -108,6 +108,7 @@ class Builder:
 
             else:
                 cond = self.parse_conditional(child.children)
+                cond.negate = child.data == 'neg_conditional'
                 body.append(cond)
 
         return body

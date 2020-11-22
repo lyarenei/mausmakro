@@ -50,15 +50,21 @@ class Interpreter:
     def _do_conditional(self, cond: Conditional):
         try:
             cond.condition.execute()
-            body = cond.body.copy()
+            failed = False
         except Exception:
-            if cond.else_body:
-                body = cond.else_body.copy()
-            else:
-                return
+            failed = True
 
-        body.extend(self._instruction_list)
-        self._instruction_list = body
+        main_branch = cond.body.copy()
+        else_branch = cond.else_body.copy() if cond.else_body else None
+
+        if failed:
+            new_instr_list = main_branch if cond.negate else else_branch
+        else:
+            new_instr_list = else_branch if cond.negate else main_branch
+
+        if new_instr_list:
+            new_instr_list.extend(self._instruction_list)
+            self._instruction_list = new_instr_list
 
     def interpret(self, macro_name: str, repeats: int = -1):
         macro = self._get_macro(macro_name)

@@ -24,6 +24,7 @@ class Instruction(Executable):
 class Conditional(Executable):
 
     condition: Instruction
+    negate = False
     body: List[Instruction]
     else_body: Optional[List[Instruction]] = None
 

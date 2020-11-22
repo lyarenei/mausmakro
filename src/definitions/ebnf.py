@@ -36,9 +36,10 @@ instruction     : {Opcode.CALL.value}
                 | {Opcode.PAUSE.value}
                 | {Opcode.WAIT.value}
 """ + r"""
-body            : "{" (instruction | conditional)+ "}"
+body            : "{" (instruction | conditional | neg_conditional)+ "}"
 """ + f"""
 conditional     : "IF" {Opcode.FIND.value} body ("ELSE" body)?
+neg_conditional : "IF NOT" {Opcode.FIND.value} body ("ELSE" body)?
 macro           : "MACRO" {ArgType.NAME.name} body 
 start           : macro+
 """
