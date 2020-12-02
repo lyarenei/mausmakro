@@ -128,9 +128,7 @@ class PauseInstruction(Instruction):
         super().__init__(arg)
 
     def execute(self):
-        input("Press ENTER to continue... ")
-        print("Execution will resume in 5 seconds")
-        sleep(5)
+        pass
 
 
 class WaitInstruction(Instruction):

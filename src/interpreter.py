@@ -1,4 +1,7 @@
+import sys
 from typing import List
+import signal
+from time import sleep
 
 from lark import Tree
 
@@ -11,10 +14,13 @@ class Interpreter:
 
     _macro_list: List[Macro]
     _instruction_list: List[Executable]
+    is_paused: bool
 
     def __init__(self, ast: Tree):
         self._macro_list = Builder().parse_tree(ast)
         self._instruction_list = []
+        self.is_paused = False
+        signal.signal(signal.SIGINT, self._sigint_handler)
 
     def _get_macro(self, name: str):
         for m in self._macro_list:
@@ -25,6 +31,14 @@ class Interpreter:
 
     def _do_interpret(self):
         while self._instruction_list:
+            if self.is_paused:
+                print("Macro paused.")
+                input("Press ENTER to continue "
+                      "or send INT signal again to exit.\n")
+                print("Execution will resume in 5 seconds")
+                self.is_paused = False
+                sleep(5)
+
             ins = self._instruction_list.pop(0)
             if isinstance(ins, Instruction):
                 self._do_instruction(ins)
@@ -43,6 +57,9 @@ class Interpreter:
             macro = self._get_macro(instr.arg)
             self._instruction_list.clear()
             self._instruction_list = macro.body.copy()
+
+        elif instr.opcode == Opcode.PAUSE:
+            self.is_paused = True
 
         else:
             instr.execute()
@@ -77,3 +94,10 @@ class Interpreter:
                     break
             self._instruction_list = macro.body.copy()
             self._do_interpret()
+
+    def _sigint_handler(self, sig, frame):
+        if self.is_paused:
+            print("Macro is already paused, exiting...")
+            sys.exit(0)
+
+        self.is_paused = True
