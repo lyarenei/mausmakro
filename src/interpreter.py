@@ -5,6 +5,7 @@ from time import sleep
 from typing import Any, Dict, List, Optional, Tuple
 
 import pyautogui
+from pynput import keyboard
 
 from definitions.general import Conditional, Instruction, Command, Stack
 from definitions.exceptions import ConditionException, InterpretException
@@ -15,6 +16,7 @@ class Interpreter:
 
     _call_stack: Stack
     _instructions: List[Instruction]
+    _kb_listener: keyboard.Listener
     _label_table: Dict[str, int]
     _program_counter: int
 
@@ -27,6 +29,7 @@ class Interpreter:
 
         self._call_stack = Stack()
         self._instructions = instructions
+        self._kb_listener = None
         self._label_table = label_table
         self._program_counter = 0
 
@@ -36,6 +39,8 @@ class Interpreter:
         pyautogui.useImageNotFoundException()
 
     def interpret(self, macro: str):
+        self._kb_listener = self._get_kb_listener()
+        self._kb_listener.start()
         self._program_counter = self._label_table[macro]
 
         while True:
@@ -47,10 +52,28 @@ class Interpreter:
             self._increment_pc()
 
             if self.is_paused:
-                input("Press ENTER to resume")
+                input("Macro paused. Press ENTER to resume")
                 print("Execution will resume in 5 seconds")
                 sleep(5)
                 self.is_paused = False
+                self._kb_listener = self._get_kb_listener()
+
+        if self._kb_listener.running:
+            self._kb_listener.stop()
+
+    def _on_release(self, key):
+        try:
+            if key.char == 'p':
+                self.is_paused = True
+
+        except AttributeError:
+            # Special key pressed, don't do anything
+            pass
+
+        return False
+
+    def _get_kb_listener(self) -> keyboard.Listener:
+        return keyboard.Listener(on_release=self._on_release)
 
     def _increment_pc(self):
         self._program_counter += 1
