@@ -13,9 +13,15 @@ class Opcode(EqualEnum):
     CALL = 'call'
     CLICK = 'click'
     DOUBLE_CLICK = 'double_click'
+    END = 'end'
+    EXIT = 'exit'
     FIND = 'find'
+    GOTO = 'goto'
+    IF = 'if'
     JUMP = 'jump'
+    LABEL = 'label'
     PAUSE = 'pause'
+    RETURN = 'return'
     WAIT = 'wait'
 
 

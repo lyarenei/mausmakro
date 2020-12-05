@@ -1,79 +1,171 @@
-from typing import List
+import sys
+from datetime import datetime, timedelta
+from pathlib import Path
+from time import sleep
+from typing import Any, Dict, List, Optional, Tuple
 
-from lark import Tree
+import pyautogui
 
-from builder import Builder
-from definitions.general import Conditional, Executable, Instruction, Macro
+from definitions.general import Conditional, Instruction, Command, Stack
+from definitions.exceptions import ConditionException, InterpretException
 from definitions.enums import Opcode
 
 
 class Interpreter:
 
-    _macro_list: List[Macro]
-    _instruction_list: List[Executable]
+    _call_stack: Stack
+    _instructions: List[Instruction]
+    _label_table: Dict[str, int]
+    _program_counter: int
 
-    def __init__(self, ast: Tree):
-        self._macro_list = Builder().parse_tree(ast)
-        self._instruction_list = []
+    is_paused = False
+    source_path = ""
 
-    def _get_macro(self, name: str):
-        for m in self._macro_list:
-            if m.name == name:
-                return m
+    def __init__(self, instructions,
+                 label_table: Dict[str, int],
+                 source_path: str = None):
 
-        raise ValueError(f"Macro {name} is not defined!")
+        self._call_stack = Stack()
+        self._instructions = instructions
+        self._label_table = label_table
+        self._program_counter = 0
 
-    def _do_interpret(self):
-        while self._instruction_list:
-            ins = self._instruction_list.pop(0)
-            if isinstance(ins, Instruction):
-                self._do_instruction(ins)
+        self.source_path = source_path
 
-            elif isinstance(ins, Conditional):
-                self._do_conditional(ins)
+        # Throw exceptions instead of returning None
+        pyautogui.useImageNotFoundException()
 
-    def _do_instruction(self, instr: Instruction):
-        if instr.opcode == Opcode.CALL:
-            macro = self._get_macro(instr.arg)
-            body = macro.body.copy()
-            body.extend(self._instruction_list)
-            self._instruction_list = body
+    def interpret(self, macro: str):
+        self._program_counter = self._label_table[macro]
 
-        elif instr.opcode == Opcode.JUMP:
-            macro = self._get_macro(instr.arg)
-            self._instruction_list.clear()
-            self._instruction_list = macro.body.copy()
-
-        else:
-            instr.execute()
-
-    def _do_conditional(self, cond: Conditional):
-        try:
-            cond.condition.execute()
-            failed = False
-        except Exception:
-            failed = True
-
-        main_branch = cond.body.copy()
-        else_branch = cond.else_body.copy() if cond.else_body else None
-
-        if failed:
-            new_instr_list = main_branch if cond.negate else else_branch
-        else:
-            new_instr_list = else_branch if cond.negate else main_branch
-
-        if new_instr_list:
-            new_instr_list.extend(self._instruction_list)
-            self._instruction_list = new_instr_list
-
-    def interpret(self, macro_name: str, repeats: int = -1):
-        macro = self._get_macro(macro_name)
-        loops = 0
         while True:
-            if repeats >= 0:
-                print(f"Iteration: {loops}")
-                loops += 1
-                if loops > repeats:
-                    break
-            self._instruction_list = macro.body.copy()
-            self._do_interpret()
+            executable = self._instructions[self._program_counter]
+            if executable.opcode == Opcode.END:
+                break
+
+            self._execute_instruction(executable)
+            self._increment_pc()
+
+            if self.is_paused:
+                input("Press ENTER to resume")
+                print("Execution will resume in 5 seconds")
+                sleep(5)
+                self.is_paused = False
+
+    def _increment_pc(self):
+        self._program_counter += 1
+
+    def _execute_instruction(self, instruction: Instruction):
+        if isinstance(instruction, Command):
+            return self._execute_command(instruction)
+
+        instruction: Conditional
+        self._execute_conditional(instruction)
+
+    def _execute_command(self, command: Command) -> Optional[bool]:
+        if command.opcode == Opcode.CALL:
+            print(f"Call {command.arg}")
+            self._call_stack.push(self._program_counter)
+            index = self._label_table[command.arg]
+            self._program_counter = index
+
+        elif command.opcode == Opcode.CLICK:
+            return self._do_click(command.arg)
+
+        elif command.opcode == Opcode.DOUBLE_CLICK:
+            return self._do_click(command.arg, is_double=True)
+
+        elif command.opcode == Opcode.EXIT:
+            print("Exiting...")
+            sys.exit(0)
+
+        elif command.opcode == Opcode.FIND:
+            self._find_image(command.arg[0], command.arg[1])
+
+        elif command.opcode == Opcode.JUMP:
+            print(f"Jump to {command.arg}")
+            index = self._label_table[command.arg]
+            self._program_counter = index
+
+        elif command.opcode == Opcode.LABEL:
+            return
+
+        elif command.opcode == Opcode.PAUSE:
+            self.is_paused = True
+
+        elif command.opcode == Opcode.RETURN:
+            if self._call_stack.empty():
+                raise InterpretException("Cannot return, no caller!")
+
+            index = self._call_stack.pop()
+            self._program_counter = index
+
+        elif command.opcode == Opcode.WAIT:
+            print(f"Waiting {command.arg} seconds")
+            sleep(command.arg)
+
+        else:
+            raise NotImplementedError(f"Instruction {command.opcode} "
+                                      f"is not implemented!")
+
+    def _execute_conditional(self, cond: Conditional):
+        try:
+            self._execute_instruction(cond.condition)
+            failed = True if cond.negate else False
+
+        except ConditionException:
+            failed = False if cond.negate else True
+
+        if cond.else_label and failed:
+            new_pc = self._label_table[cond.else_label]
+
+        elif not cond.else_label and failed:
+            new_pc = self._label_table[cond.end_label]
+
+        else:
+            new_pc = self._program_counter
+
+        self._program_counter = new_pc
+
+    def _do_click(self, args: Tuple[Any, Any], is_double=False):
+        clicks = 2 if is_double else 1
+
+        if isinstance(args[0], int):
+            print(f"Click at {args[0]},{args[1]}")
+            pyautogui.click(x=args[0], y=args[1], clicks=clicks)
+            return
+
+        coords = self._find_image(args[0], args[1])
+        pyautogui.click(*coords, clicks=clicks)
+
+    @staticmethod
+    def _fix_coords(coords: Tuple[int, int]) -> Tuple[int, int]:
+        if sys.platform == 'darwin':
+            return int(coords[0]/2), int(coords[1]/2)
+
+        return coords
+
+    def _find_image(self, image: str, timeout: int) -> Tuple[int, int]:
+        abs_path = Path(self.source_path).parent
+        img_path = Path(image)
+        if not img_path.is_absolute():
+            img_path = abs_path.joinpath(img_path)
+
+        deadline = datetime.now() + timedelta(seconds=timeout)
+        print(f"Finding image .. {image}")
+
+        while datetime.now() < deadline:
+            try:
+                coords = pyautogui.locateCenterOnScreen(str(img_path),
+                                                        grayscale=True,
+                                                        step=2)
+                print("Image found")
+                return self._fix_coords(coords)
+
+            except pyautogui.ImageNotFoundException:
+                # Try again
+                pass
+
+            sleep(0.5)
+
+        raise ConditionException("Image not found within the time limit")

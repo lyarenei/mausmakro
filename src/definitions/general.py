@@ -3,39 +3,47 @@ from typing import Any, List, Optional
 from definitions.enums import Opcode
 
 
-class Executable:
-
-    def execute(self):
-        raise NotImplementedError
-
-
-class Instruction(Executable):
+class Instruction:
 
     opcode: Opcode
+
+
+class Command(Instruction):
+
     arg: Any
 
-    def __init__(self, arg: Any):
+    def __init__(self, opcode: Opcode, arg: Any = None):
+        self.opcode = opcode
         self.arg = arg
 
-    def execute(self):
-        raise NotImplementedError
 
+class Conditional(Instruction):
 
-class Conditional(Executable):
-
-    condition: Instruction
+    condition: Command
     negate = False
-    body: List[Instruction]
-    else_body: Optional[List[Instruction]] = None
+    end_label: str
+    else_label: Optional[str]
 
-    def execute(self):
-        raise NotImplementedError
+    def __init__(self, opcode: Opcode):
+        self.opcode = opcode
 
 
 class Macro:
 
     name: str
-    body: List[Executable]
+    body: List[Instruction]
 
     def __init__(self, name: str):
         self.name = name
+
+
+class Stack(list):
+
+    def push(self, obj: Any):
+        self.append(obj)
+
+    def empty(self):
+        return len(self) == 0
+
+    def top(self):
+        return self[-1]

@@ -1,10 +1,11 @@
 #!/usr/local/bin/python3
+import sys
 
 import click
-from lark import Lark
 
-from definitions.ebnf import ebnf
+from definitions.exceptions import ParserException
 from interpreter import Interpreter
+from parser import Parser
 from recorder import Recorder
 
 
@@ -29,13 +30,25 @@ def record(output):
               help="Number of times to repeat specified macro, "
                    "defaults to -1 (infinite")
 def interpret(file, macro, times):
-    parser = Lark(ebnf, parser='lalr')
-    with open(file, 'r') as f:
-        source = f.read()
+    try:
+        instructions, label_table = Parser(file).parse()
 
-    tree = parser.parse(source)
-    interpreter = Interpreter(tree)
-    interpreter.interpret(macro, repeats=times)
+    except ParserException as e:
+        print(f"An error occurred while parsing the file:\n{e}")
+        sys.exit(1)
+
+    interpreter = Interpreter(instructions, label_table, file)
+    iters = 0
+
+    while iters < times or times == -1:
+        try:
+            interpreter.interpret(macro)
+
+        except Exception as e:
+            print(f"An error occurred when interpreting the macro:\n{e}")
+            sys.exit(2)
+
+        iters += 1
 
 
 if __name__ == '__main__':
