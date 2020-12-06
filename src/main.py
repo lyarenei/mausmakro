@@ -24,12 +24,20 @@ def record(output):
 
 @main.command()
 @click.option('--file', '-f', help="Source file with macros")
-@click.option('--macro', '-m',
-              help="Name of the macro to interpret")
+@click.option('--macro', '-m', help="Name of the macro to interpret")
 @click.option('--times', '-t', type=int, default=-1,
               help="Number of times to repeat specified macro, "
                    "defaults to -1 (infinite")
-def interpret(file, macro, times):
+@click.option('--go-back-on-fail', is_flag=True,
+              help="Go back to previous command on current command failure"
+                   "(i.e.: click wasn't processed by the application "
+                   "so image is not found -> go back and click again).")
+def interpret(file, macro, times, go_back_on_fail):
+    opts = {
+        'file': file,
+        'go_back_on_fail': go_back_on_fail
+    }
+
     try:
         instructions, label_table = Parser(file).parse()
 
@@ -37,7 +45,7 @@ def interpret(file, macro, times):
         print(f"An error occurred while parsing the file:\n{e}")
         sys.exit(1)
 
-    interpreter = Interpreter(instructions, label_table, file)
+    interpreter = Interpreter(instructions, label_table, opts)
     iters = 0
 
     while iters < times or times == -1:

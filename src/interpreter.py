@@ -7,14 +7,17 @@ from typing import Any, Dict, List, Optional, Tuple
 import pyautogui
 from pynput import keyboard
 
-from definitions.general import Conditional, Instruction, Command, Stack
-from definitions.exceptions import ConditionException, InterpretException
+from definitions.general import Conditional, Instruction, Command, \
+    HISTORY_EXCL, Stack
+from definitions.exceptions import ConditionException, InterpretException, \
+    MausMakroException
 from definitions.enums import Opcode
 
 
 class Interpreter:
 
     _call_stack: Stack
+    _pc_history: Stack
     _instructions: List[Instruction]
     _kb_listener: keyboard.Listener
     _label_table: Dict[str, int]
@@ -25,15 +28,17 @@ class Interpreter:
 
     def __init__(self, instructions,
                  label_table: Dict[str, int],
-                 source_path: str = None):
+                 opts: Dict[str, Any]):
 
         self._call_stack = Stack()
+        self._pc_history = Stack()
         self._instructions = instructions
         self._kb_listener = None
         self._label_table = label_table
         self._program_counter = 0
 
-        self.source_path = source_path
+        self.source_path = opts['file']
+        self.go_back_on_fail = opts['go_back_on_fail']
 
         # Throw exceptions instead of returning None
         pyautogui.useImageNotFoundException()
@@ -48,15 +53,36 @@ class Interpreter:
             if executable.opcode == Opcode.END:
                 break
 
-            self._execute_instruction(executable)
-            self._increment_pc()
-
             if self.is_paused:
                 input("Macro paused. Press ENTER to resume")
                 print("Execution will resume in 5 seconds")
                 sleep(5)
                 self.is_paused = False
                 self._kb_listener = self._get_kb_listener()
+
+            try:
+                self._execute_instruction(executable)
+
+                if executable.opcode not in HISTORY_EXCL:
+                    self._pc_history.push(self._program_counter)
+
+                self._program_counter += 1
+
+            except MausMakroException as e:
+                if self.go_back_on_fail and self._pc_history:
+                    print("Go back option enabled, "
+                          "executing previous command...")
+                    while True:
+                        self._program_counter = self._pc_history.pop()
+                        executable = self._instructions[self._program_counter]
+
+                        if executable.opcode != Opcode.LABEL:
+                            # Label does nothing and always succeeds
+                            # => creates infinite loop
+                            break
+
+                else:
+                    raise e
 
         if self._kb_listener.running:
             self._kb_listener.stop()
@@ -74,9 +100,6 @@ class Interpreter:
 
     def _get_kb_listener(self) -> keyboard.Listener:
         return keyboard.Listener(on_release=self._on_release)
-
-    def _increment_pc(self):
-        self._program_counter += 1
 
     def _execute_instruction(self, instruction: Instruction):
         if isinstance(instruction, Command):

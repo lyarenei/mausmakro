@@ -3,6 +3,14 @@ from typing import Any, List, Optional
 from definitions.enums import Opcode
 
 
+HISTORY_EXCL = [
+    Opcode.CALL,
+    Opcode.GOTO,
+    Opcode.JUMP,
+    Opcode.RETURN,
+]
+
+
 class Instruction:
 
     opcode: Opcode
@@ -42,7 +50,7 @@ class Stack(list):
     def push(self, obj: Any):
         self.append(obj)
 
-    def empty(self):
+    def empty(self) -> bool:
         return len(self) == 0
 
     def top(self):
