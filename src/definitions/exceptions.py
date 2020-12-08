@@ -27,3 +27,7 @@ class LabelException(MausMakroException):
 
 class ParserException(MausMakroException):
     pass
+
+
+class RetryException(MausMakroException):
+    pass

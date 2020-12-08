@@ -28,10 +28,6 @@ def record(output):
 @click.option('--times', '-t', type=int, default=-1,
               help="Number of times to repeat specified macro, "
                    "defaults to -1 (infinite")
-@click.option('--go-back-on-fail', is_flag=True,
-              help="Go back to previous command on current command failure"
-                   "(i.e.: click wasn't processed by the application "
-                   "so image is not found -> go back and click again).")
 @click.option('--enable-retry', is_flag=True,
               help="Enable command retrying before going back "
                    "(with --go-back-on-fail) or failing completely.")
@@ -39,11 +35,10 @@ def record(output):
               help="Retry the failing command specified times before failing. "
                    "Defaults to 1. Has no effect if --retry-times command "
                    "is not specified")
-def interpret(file: str, macro: str, times: int, go_back_on_fail: bool,
-              enable_retry: bool, retry_times: int):
+def interpret(file: str, macro: str, times: int, enable_retry: bool,
+              retry_times: int):
     opts = {
         'file': file,
-        'go_back_on_fail': go_back_on_fail,
         'enable_retry': enable_retry,
         'retry_times': retry_times
     }

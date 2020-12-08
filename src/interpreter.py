@@ -7,17 +7,15 @@ from typing import Any, Dict, List, Optional, Tuple
 import pyautogui
 from pynput import keyboard
 
-from definitions.general import Conditional, Instruction, Command, \
-    HISTORY_EXCL, Stack
+from definitions.general import Conditional, Instruction, Command, Stack
 from definitions.exceptions import ConditionException, InterpretException, \
-    MausMakroException
+    MausMakroException, RetryException
 from definitions.enums import Opcode
 
 
 class Interpreter:
 
     _call_stack: Stack
-    _pc_history: Stack
     _instructions: List[Instruction]
     _kb_listener: keyboard.Listener
     _label_table: Dict[str, int]
@@ -34,28 +32,27 @@ class Interpreter:
                  opts: Dict[str, Any]):
 
         self._call_stack = Stack()
-        self._pc_history = Stack()
         self._instructions = instructions
         self._kb_listener = keyboard.Listener(on_release=self._on_release)
         self._label_table = label_table
         self._program_counter = 0
-        self._kb_listener.start()
 
         self.source_path = opts['file']
-        self.go_back_on_fail = opts['go_back_on_fail']
         self.enable_retry = opts['enable_retry']
         self.retry_times = opts['retry_times']
 
         # Throw exceptions instead of returning None
         pyautogui.useImageNotFoundException()
 
+        self._kb_listener.start()
+
     def interpret(self, macro: str):
         self._program_counter = self._label_table[macro]
         retries = 0
 
         while True:
-            executable = self._instructions[self._program_counter]
-            if executable.opcode == Opcode.END:
+            instr = self._instructions[self._program_counter]
+            if instr.opcode == Opcode.END:
                 break
 
             if self.is_paused:
@@ -65,43 +62,34 @@ class Interpreter:
                 self.is_paused = False
 
             try:
-                self._execute_instruction(executable)
-
-                if executable.opcode not in HISTORY_EXCL:
-                    self._pc_history.push(self._program_counter)
-
+                self._execute_instruction(instr)
                 self._program_counter += 1
-                retries = 0
 
             except MausMakroException as e:
+                print("Command execution failed")
+
                 if self.enable_retry and retries <= self.retry_times:
-                    print(e)
-                    retries += 1
-                    if retries > self.retry_times:
-                        print("Maximum retries reached, giving up.")
+                    print("Command retry enabled, retrying command...")
 
-                    else:
-                        print("Command retry enabled, retrying command...")
-                        print(f"Retries: {retries}/{self.retry_times}")
-                        continue
-
-                if self.go_back_on_fail and self._pc_history:
-                    print(e)
-                    print("Go back option enabled, "
-                          "executing previous command...")
-
-                    while True:
-                        self._program_counter = self._pc_history.pop()
-                        executable = self._instructions[self._program_counter]
-
-                        if executable.opcode != Opcode.LABEL \
-                           and executable.opcode != Opcode.WAIT:
-                            # These do nothing and always succeed
-                            # => infinite loop
-                            break
+                    self._retry_instruction(instr)
 
                 else:
                     raise e
+
+    def _retry_instruction(self, instr: Instruction):
+        retries = 1
+
+        while retries <= self.retry_times:
+            print(f"Retries: {retries}/{self.retry_times}")
+            try:
+                self._execute_instruction(instr)
+                break
+
+            except Exception as e:
+                print(e)
+                retries += 1
+
+        raise RetryException("Maximum retries reached, giving up.")
 
     def _on_release(self, key):
         try:
