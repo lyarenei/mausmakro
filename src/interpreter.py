@@ -36,9 +36,10 @@ class Interpreter:
         self._call_stack = Stack()
         self._pc_history = Stack()
         self._instructions = instructions
-        self._kb_listener = None
+        self._kb_listener = keyboard.Listener(on_release=self._on_release)
         self._label_table = label_table
         self._program_counter = 0
+        self._kb_listener.start()
 
         self.source_path = opts['file']
         self.go_back_on_fail = opts['go_back_on_fail']
@@ -49,8 +50,6 @@ class Interpreter:
         pyautogui.useImageNotFoundException()
 
     def interpret(self, macro: str):
-        self._kb_listener = self._get_kb_listener()
-        self._kb_listener.start()
         self._program_counter = self._label_table[macro]
         retries = 0
 
@@ -64,7 +63,6 @@ class Interpreter:
                 print("Execution will resume in 5 seconds")
                 sleep(5)
                 self.is_paused = False
-                self._kb_listener = self._get_kb_listener()
 
             try:
                 self._execute_instruction(executable)
@@ -91,6 +89,7 @@ class Interpreter:
                     print(e)
                     print("Go back option enabled, "
                           "executing previous command...")
+
                     while True:
                         self._program_counter = self._pc_history.pop()
                         executable = self._instructions[self._program_counter]
@@ -104,22 +103,21 @@ class Interpreter:
                 else:
                     raise e
 
-        if self._kb_listener.running:
-            self._kb_listener.stop()
-
     def _on_release(self, key):
         try:
             if key.char == 'p':
+                print(f"Interpreter is paused: {self.is_paused}")
                 self.is_paused = True
 
+            elif key.char == 'x':
+                print("Exiting...")
+                sys.exit(0)
+
         except AttributeError:
-            # Special key pressed, don't do anything
+            # Special key pressed
             pass
 
         return False
-
-    def _get_kb_listener(self) -> keyboard.Listener:
-        return keyboard.Listener(on_release=self._on_release)
 
     def _execute_instruction(self, instruction: Instruction):
         if isinstance(instruction, Command):
@@ -172,7 +170,7 @@ class Interpreter:
 
         else:
             raise NotImplementedError(f"Instruction {command.opcode} "
-                                      f"is not implemented!")
+                                      "is not implemented!")
 
     def _execute_conditional(self, cond: Conditional):
         try:
