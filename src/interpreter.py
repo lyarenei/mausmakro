@@ -51,15 +51,11 @@ class Interpreter:
         retries = 0
 
         while True:
+            self.prompt_if_paused()
             instr = self._instructions[self._program_counter]
+
             if instr.opcode == Opcode.END:
                 break
-
-            if self.is_paused:
-                input("Macro paused. Press ENTER to resume")
-                print("Execution will resume in 5 seconds")
-                sleep(5)
-                self.is_paused = False
 
             try:
                 self._execute_instruction(instr)
@@ -80,7 +76,9 @@ class Interpreter:
         retries = 1
 
         while retries <= self.retry_times:
+            self.prompt_if_paused()
             print(f"Retries: {retries}/{self.retry_times}")
+
             try:
                 self._execute_instruction(instr)
                 break
@@ -94,7 +92,7 @@ class Interpreter:
     def _on_release(self, key):
         try:
             if key.char == 'p':
-                print(f"Interpreter is paused: {self.is_paused}")
+                print("Pausing execution at the next possible moment...")
                 self.is_paused = True
 
             elif key.char == 'x':
@@ -104,8 +102,6 @@ class Interpreter:
         except AttributeError:
             # Special key pressed
             pass
-
-        return False
 
     def _execute_instruction(self, instruction: Instruction):
         if isinstance(instruction, Command):
@@ -221,3 +217,10 @@ class Interpreter:
             sleep(0.5)
 
         raise ConditionException("Image not found within the time limit")
+
+    def prompt_if_paused(self):
+        if self.is_paused:
+            input("Macro paused. Press ENTER to resume")
+            print("Execution will resume in 5 seconds")
+            sleep(5)
+            self.is_paused = False
