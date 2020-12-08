@@ -3,7 +3,7 @@ import sys
 
 import click
 
-from definitions.exceptions import ParserException
+from definitions.exceptions import MausMakroException
 from interpreter import Interpreter
 from parser import Parser
 from recorder import Recorder
@@ -49,9 +49,11 @@ def interpret(file: str, macro: str, times: int, go_back_on_fail: bool,
     }
 
     try:
-        instructions, label_table = Parser(file).parse()
+        parser = Parser(file)
+        instructions, label_table = parser.parse()
+        parser.perform_checks()
 
-    except ParserException as e:
+    except MausMakroException as e:
         print(f"An error occurred while parsing the file:\n{e}")
         sys.exit(1)
 
