@@ -25,6 +25,9 @@ class Interpreter:
 
     is_paused = False
     source_path = ""
+    go_back_on_fail: bool
+    enable_retry: bool
+    retry_times: int
 
     def __init__(self, instructions,
                  label_table: Dict[str, int],
@@ -39,6 +42,8 @@ class Interpreter:
 
         self.source_path = opts['file']
         self.go_back_on_fail = opts['go_back_on_fail']
+        self.enable_retry = opts['enable_retry']
+        self.retry_times = opts['retry_times']
 
         # Throw exceptions instead of returning None
         pyautogui.useImageNotFoundException()
@@ -47,6 +52,7 @@ class Interpreter:
         self._kb_listener = self._get_kb_listener()
         self._kb_listener.start()
         self._program_counter = self._label_table[macro]
+        retries = 0
 
         while True:
             executable = self._instructions[self._program_counter]
@@ -67,17 +73,31 @@ class Interpreter:
                     self._pc_history.push(self._program_counter)
 
                 self._program_counter += 1
+                retries = 0
 
             except MausMakroException as e:
+                if self.enable_retry and retries <= self.retry_times:
+                    print(e)
+                    retries += 1
+                    if retries > self.retry_times:
+                        print("Maximum retries reached, giving up.")
+
+                    else:
+                        print("Command retry enabled, retrying command...")
+                        print(f"Retries: {retries}/{self.retry_times}")
+                        continue
+
                 if self.go_back_on_fail and self._pc_history:
+                    print(e)
                     print("Go back option enabled, "
                           "executing previous command...")
                     while True:
                         self._program_counter = self._pc_history.pop()
                         executable = self._instructions[self._program_counter]
 
-                        if executable.opcode != Opcode.LABEL:
-                            # Label does nothing and always succeeds
+                        if executable.opcode != Opcode.LABEL \
+                           and executable.opcode != Opcode.WAIT:
+                            # These do nothing and always succeeds
                             # => creates infinite loop
                             break
 
