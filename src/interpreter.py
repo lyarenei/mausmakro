@@ -97,8 +97,8 @@ class Interpreter:
 
                         if executable.opcode != Opcode.LABEL \
                            and executable.opcode != Opcode.WAIT:
-                            # These do nothing and always succeeds
-                            # => creates infinite loop
+                            # These do nothing and always succeed
+                            # => infinite loop
                             break
 
                 else:
