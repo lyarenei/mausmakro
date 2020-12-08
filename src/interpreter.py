@@ -212,10 +212,10 @@ class Interpreter:
         return coords
 
     def _find_image(self, image: str, timeout: int) -> Tuple[int, int]:
-        abs_path = Path(self.source_path).parent
         img_path = Path(image)
         if not img_path.is_absolute():
-            img_path = abs_path.joinpath(img_path)
+            abs_path = Path(self.source_path).parent
+            img_path = abs_path.joinpath(Path(f'images/{image}'))
 
         deadline = datetime.now() + timedelta(seconds=timeout)
         print(f"Finding image .. {image}")

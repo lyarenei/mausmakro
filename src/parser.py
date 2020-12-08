@@ -54,13 +54,19 @@ class Parser:
                 raise LabelException(f"Label {label} is not defined!")
 
     def check_images(self):
-        abs_path = Path(self._source_path).parent
         for img in self._images_to_check:
             img_path = Path(img)
             if not img_path.is_absolute():
-                img_path = abs_path.joinpath(img_path)
-                if not img_path.exists():
-                    raise ImageException(f"Image {img} not found!")
+                abs_path = Path(self._source_path).parent
+                img_path = abs_path.joinpath(Path(f'images/{img}'))
+
+            if not img_path.exists():
+                raise ImageException(f"Image {img} not found! "
+                                     "Please make sure to put the images "
+                                     "inside implicit 'images' directory "
+                                     "at the specified macro file "
+                                     "location if not using absolute "
+                                     "paths for the images.")
 
     def _find_label(self, label: str) -> bool:
         for instr in self.instructions:
@@ -120,9 +126,15 @@ class Parser:
             return Command(Opcode.CALL, arg)
 
         elif opcode == Opcode.CLICK:
+            if isinstance(arg[0], str):
+                self._images_to_check.append(arg[0])
+
             return Command(Opcode.CLICK, arg)
 
         elif opcode == Opcode.DOUBLE_CLICK:
+            if isinstance(arg[0], str):
+                self._images_to_check.append(arg[0])
+
             return Command(Opcode.DOUBLE_CLICK, arg)
 
         elif opcode == Opcode.FIND:
