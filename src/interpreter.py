@@ -81,7 +81,7 @@ class Interpreter:
 
             try:
                 self._execute_instruction(instr)
-                break
+                return
 
             except Exception as e:
                 print(e)
