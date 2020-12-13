@@ -6,6 +6,7 @@ import click
 from definitions.exceptions import MausMakroException
 from interpreter import Interpreter
 from parser import Parser
+from preprocessor import Preprocessor
 from recorder import Recorder
 
 
@@ -44,7 +45,8 @@ def interpret(file: str, macro: str, times: int, enable_retry: bool,
     }
 
     try:
-        parser = Parser(file)
+        file_content = Preprocessor(file).process()
+        parser = Parser(file, file_content)
         instructions, label_table = parser.parse()
         parser.perform_checks()
 

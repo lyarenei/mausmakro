@@ -22,15 +22,13 @@ class Parser:
     instructions: List[Instruction]
     label_table: Dict[str, int]
 
-    def __init__(self, file: str):
-        self._source_path = file
-
-        lark = Lark(ebnf, parser='lalr')
-        with open(file, 'r') as f:
-            source = f.read()
+    def __init__(self, path: str, source: str):
 
         self._images_to_check = []
         self._labels_to_check = []
+        self._source_path = path
+
+        lark = Lark(ebnf, parser='lalr')
         self._tree = lark.parse(source)
 
         self.instructions = []
