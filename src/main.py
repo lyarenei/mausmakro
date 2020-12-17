@@ -36,12 +36,15 @@ def record(output):
               help="Retry the failing command specified times before failing. "
                    "Defaults to 1. Has no effect if --retry-times command "
                    "is not specified")
+@click.option('--color-match', is_flag=True,
+              help="Perform color image find by default")
 def interpret(file: str, macro: str, times: int, enable_retry: bool,
-              retry_times: int):
+              retry_times: int, color_match: bool):
     opts = {
         'file': file,
         'enable_retry': enable_retry,
-        'retry_times': retry_times
+        'retry_times': retry_times,
+        'color_match': color_match
     }
 
     try:

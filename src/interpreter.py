@@ -195,6 +195,8 @@ class Interpreter:
 
     def _find_image(self, image: str, timeout: int) -> Tuple[int, int]:
         img_path = Path(image)
+        grayscale = not self.opts['color_match']
+
         if not img_path.is_absolute():
             abs_path = Path(self.opts['file']).parent
             img_path = abs_path.joinpath(Path(f'images/{image}'))
@@ -205,7 +207,7 @@ class Interpreter:
         while datetime.now() < deadline:
             try:
                 coords = pyautogui.locateCenterOnScreen(str(img_path),
-                                                        grayscale=True,
+                                                        grayscale=grayscale,
                                                         step=2)
                 print("Image found")
                 return self._fix_coords(coords)
