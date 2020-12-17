@@ -96,6 +96,7 @@ class Parser:
 
         # noinspection PyTypeChecker
         name = self.parse_token(tree.children[0])
+        self._add_label(name)
         self.instructions.append(Command(Opcode.LABEL, name))
         self._parse_body(tree.children[1])
         self.instructions.append(Command(Opcode.END))
