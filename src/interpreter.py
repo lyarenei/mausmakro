@@ -214,7 +214,7 @@ class Interpreter:
                 # Try again
                 pass
 
-            sleep(0.5)
+            sleep(1)
 
         raise ConditionException("Image not found within the time limit")
 
