@@ -48,6 +48,7 @@ class Parser:
             label = self._labels_to_check[0]
             if self._find_label(label):
                 self._labels_to_check.remove(label)
+
             else:
                 raise LabelException(f"Label {label} is not defined!")
 
@@ -197,6 +198,7 @@ class Parser:
             cond.else_label = self._generate_label()
             self.instructions.append(Command(Opcode.LABEL, cond.else_label))
             self._parse_body(conditional[2])
+
         else:
             cond.else_label = None
 
