@@ -21,12 +21,10 @@ class Interpreter:
     _label_table: Dict[str, int]
     _program_counter: int
 
-    enable_retry: bool
     exit_requested = False
     go_back_on_fail: bool
     is_paused = False
-    retry_times: int
-    source_path = ""
+    opts: Dict[str, Any]
 
     def __init__(self, instructions,
                  label_table: Dict[str, int],
@@ -38,9 +36,7 @@ class Interpreter:
         self._label_table = label_table
         self._program_counter = 0
 
-        self.source_path = opts['file']
-        self.enable_retry = opts['enable_retry']
-        self.retry_times = opts['retry_times']
+        self.opts = opts
 
         # Throw exceptions instead of returning None
         pyautogui.useImageNotFoundException()
@@ -67,7 +63,8 @@ class Interpreter:
                     break
 
                 print("Command execution failed")
-                if self.enable_retry and retries <= self.retry_times:
+                if self.opts['enable_retry'] \
+                   and retries <= self.opts['retry_times']:
                     print("Command retry enabled, retrying command...")
                     self._retry_instruction(instr)
 
@@ -77,9 +74,9 @@ class Interpreter:
     def _retry_instruction(self, instr: Instruction):
         retries = 1
 
-        while retries <= self.retry_times:
+        while retries <= self.opts['retry_times']:
             self.prompt_if_paused()
-            print(f"Retries: {retries}/{self.retry_times}")
+            print(f"Retries: {retries}/{self.opts['retry_times']}")
 
             try:
                 self._execute_instruction(instr)
@@ -199,7 +196,7 @@ class Interpreter:
     def _find_image(self, image: str, timeout: int) -> Tuple[int, int]:
         img_path = Path(image)
         if not img_path.is_absolute():
-            abs_path = Path(self.source_path).parent
+            abs_path = Path(self.opts['file']).parent
             img_path = abs_path.joinpath(Path(f'images/{image}'))
 
         deadline = datetime.now() + timedelta(seconds=timeout)
