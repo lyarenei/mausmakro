@@ -144,6 +144,10 @@ class Parser:
             self._labels_to_check.append(arg)
             return Command(Opcode.JUMP, arg)
 
+        elif opcode == Opcode.LABEL:
+            self._add_label(arg)
+            return Command(Opcode.LABEL, arg)
+
         elif opcode == Opcode.PAUSE:
             return Command(Opcode.PAUSE)
 
@@ -203,3 +207,9 @@ class Parser:
     def _generate_label() -> str:
         letters = string.ascii_letters
         return ''.join(random.choice(letters) for _ in range(8))
+
+    def _add_label(self, label: str):
+        if label in self._labels_to_check:
+            raise LabelException(f"Label {label} has been already defined!")
+
+        self._labels_to_check.append(label)
