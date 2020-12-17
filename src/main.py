@@ -38,13 +38,19 @@ def record(output):
                    "is not specified")
 @click.option('--color-match', is_flag=True,
               help="Perform color image find by default")
+@click.option('--match-step', type=click.IntRange(1, 5), default=2,
+              help="Image match step. Higher value means faster search, "
+                   "but lowers accuracy. Recommended for higher res (>1080p) "
+                   "displays. Defaults to 2.")
 def interpret(file: str, macro: str, times: int, enable_retry: bool,
-              retry_times: int, color_match: bool):
+              retry_times: int, color_match: bool, match_step: int):
+
     opts = {
-        'file': file,
+        'color_match': color_match,
         'enable_retry': enable_retry,
-        'retry_times': retry_times,
-        'color_match': color_match
+        'file': file,
+        'match_step': match_step,
+        'retry_times': retry_times
     }
 
     try:
