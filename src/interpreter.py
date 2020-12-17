@@ -7,10 +7,10 @@ from typing import Any, Dict, List, Optional, Tuple
 import pyautogui
 from pynput import keyboard
 
-from definitions.general import Conditional, Instruction, Command, Stack
+from definitions.enums import Opcode
 from definitions.exceptions import ConditionException, InterpretException, \
     MausMakroException, RetryException
-from definitions.enums import Opcode
+from definitions.general import Conditional, Instruction, Command, Stack
 
 
 class Interpreter:
