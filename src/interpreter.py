@@ -21,11 +21,12 @@ class Interpreter:
     _label_table: Dict[str, int]
     _program_counter: int
 
-    is_paused = False
-    source_path = ""
-    go_back_on_fail: bool
     enable_retry: bool
+    exit_requested = False
+    go_back_on_fail: bool
+    is_paused = False
     retry_times: int
+    source_path = ""
 
     def __init__(self, instructions,
                  label_table: Dict[str, int],
@@ -50,7 +51,7 @@ class Interpreter:
         self._program_counter = self._label_table[macro]
         retries = 0
 
-        while True:
+        while not self.exit_requested:
             self.prompt_if_paused()
             instr = self._instructions[self._program_counter]
 
@@ -62,11 +63,12 @@ class Interpreter:
                 self._program_counter += 1
 
             except MausMakroException as e:
-                print("Command execution failed")
+                if self.exit_requested:
+                    break
 
+                print("Command execution failed")
                 if self.enable_retry and retries <= self.retry_times:
                     print("Command retry enabled, retrying command...")
-
                     self._retry_instruction(instr)
 
                 else:
@@ -97,7 +99,8 @@ class Interpreter:
 
             elif key.char == 'x':
                 print("Exiting...")
-                sys.exit(0)
+                self.is_paused = False
+                self.exit_requested = True
 
         except AttributeError:
             # Special key pressed
