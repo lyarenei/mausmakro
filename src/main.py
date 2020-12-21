@@ -16,7 +16,7 @@ def main():
 
 
 @main.command()
-@click.option('--output', '-o', default="mausmakro_saved",
+@click.option('--output', '-o', default=None,
               help="Output file")
 def record(output):
     rec = Recorder(output)

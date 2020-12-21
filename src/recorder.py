@@ -1,4 +1,5 @@
 import signal
+import sys
 from datetime import datetime
 from typing import Optional, TextIO
 
@@ -18,7 +19,12 @@ class Recorder:
         self._listener = Listener(on_click=self._on_click)
         signal.signal(signal.SIGINT, self._signal_handler)
 
-        self._output = open(self._filename, 'w')
+        if self._filename:
+            self._output = open(self._filename, 'w')
+
+        else:
+            self._output = sys.stdout
+
         self._write("MACRO macro_name {")
 
     def record(self):
@@ -48,10 +54,14 @@ class Recorder:
 
         if self._get_second_delta() is not None \
                 and self._get_second_delta() > 0:
-            print(f"Wait {self._get_second_delta()} seconds")
-            self._write(f"  WAIT {self._get_second_delta()}s")
+            if self._filename:
+                print(f"Wait {self._get_second_delta()} seconds")
+
+            self._write(f"    WAIT {self._get_second_delta()}s")
 
         if pressed:
-            print(f"Mouse clicked at ({x}, {y})")
-            self._write(f"  CLICK {x},{y}")
+            if self._filename:
+                print(f"Mouse clicked at ({x}, {y})")
+
+            self._write(f"    CLICK {x},{y}")
             self._start_time = datetime.now()
