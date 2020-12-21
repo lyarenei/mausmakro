@@ -91,7 +91,7 @@ class Parser:
             self._parse_macro(child)
 
     def _parse_macro(self, tree: Tree):
-        if tree.data != 'macro':
+        if tree.data != 'macro' and tree.data != 'procedure':
             raise ParserException("Invalid tree passed: "
                                   f"Expected 'macro' tree, got '{tree.data}'")
 
@@ -100,7 +100,12 @@ class Parser:
         self._add_label(name)
         self.instructions.append(Command(Opcode.LABEL, name))
         self._parse_body(tree.children[1])
-        self.instructions.append(Command(Opcode.END))
+
+        if tree.data == 'macro':
+            self.instructions.append(Command(Opcode.END))
+            return
+
+        self.instructions.append(Command(Opcode.RETURN))
 
     def _parse_body(self, tree: Tree):
         if tree.data != 'body':
