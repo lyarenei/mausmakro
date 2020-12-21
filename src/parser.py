@@ -5,7 +5,7 @@ from typing import Any, Dict, List, Tuple, Union
 
 from lark import Lark, Token, Tree
 
-from definitions.ebnf import ebnf
+from lib.ebnf import ebnf
 from definitions.enums import ArgType, Opcode
 from definitions.general import Command, Conditional, Instruction
 from definitions.exceptions import ImageException, LabelException, \
