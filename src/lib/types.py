@@ -3,14 +3,6 @@ from typing import Any, List, Optional
 from lib.enums import Opcode
 
 
-HISTORY_EXCL = [
-    Opcode.CALL,
-    Opcode.GOTO,
-    Opcode.JUMP,
-    Opcode.RETURN,
-]
-
-
 class Instruction:
 
     opcode: Opcode

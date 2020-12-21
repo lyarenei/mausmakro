@@ -10,7 +10,7 @@ from pynput import keyboard
 from lib.enums import Opcode
 from lib.exceptions import ConditionException, InterpretException, \
     MausMakroException, RetryException
-from definitions.general import Conditional, Instruction, Command, Stack
+from lib.types import Conditional, Instruction, Command, Stack
 
 
 class Interpreter:
