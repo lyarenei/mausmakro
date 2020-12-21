@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from definitions.exceptions import ParserException
+from lib.exceptions import ParserException
 
 
 class Preprocessor:

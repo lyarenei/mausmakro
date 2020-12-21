@@ -3,7 +3,7 @@ import sys
 
 import click
 
-from definitions.exceptions import MausMakroException
+from lib.exceptions import MausMakroException
 from interpreter import Interpreter
 from parser import Parser
 from preprocessor import Preprocessor

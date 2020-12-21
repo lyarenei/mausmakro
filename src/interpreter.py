@@ -8,7 +8,7 @@ import pyautogui
 from pynput import keyboard
 
 from lib.enums import Opcode
-from definitions.exceptions import ConditionException, InterpretException, \
+from lib.exceptions import ConditionException, InterpretException, \
     MausMakroException, RetryException
 from definitions.general import Conditional, Instruction, Command, Stack
 
