@@ -128,7 +128,10 @@ class Interpreter:
             sys.exit(0)
 
         elif command.opcode == Opcode.FIND:
-            self._find_image(command.arg[0], command.arg[1])
+            self._find_image(command.arg[0],
+                             command.arg[1],
+                             grayscale=not self.opts['color_match'],
+                             match_step=self.opts['match_step'])
 
         elif command.opcode == Opcode.JUMP:
             print(f"Jump to {command.arg}")
@@ -183,7 +186,11 @@ class Interpreter:
             pyautogui.click(x=args[0], y=args[1], clicks=clicks)
             return
 
-        coords = self._find_image(args[0], args[1])
+        coords = self._find_image(args[0],
+                                  args[1],
+                                  grayscale=not self.opts['color_match'],
+                                  match_step=self.opts['match_step'])
+
         pyautogui.click(*coords, clicks=clicks)
 
     @staticmethod
@@ -193,10 +200,9 @@ class Interpreter:
 
         return coords
 
-    def _find_image(self, image: str, timeout: int) -> Tuple[int, int]:
+    def _find_image(self, image: str, timeout: int, grayscale: bool = True,
+                    match_step: int = 2) -> Tuple[int, int]:
         img_path = Path(image)
-        grayscale = not self.opts['color_match']
-        match_step = self.opts['match_step']
 
         if not img_path.is_absolute():
             abs_path = Path(self.opts['file']).parent
