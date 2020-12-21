@@ -59,7 +59,7 @@ def interpret(file: str, macro: str, times: int, enable_retry: bool,
         instructions, label_table = parser.parse()
         parser.perform_checks()
 
-    except MausMakroException as e:
+    except Exception as e:
         print(f"An error occurred while parsing the file:\n{e}")
         sys.exit(1)
 
