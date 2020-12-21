@@ -21,6 +21,7 @@ class Parser:
 
     instructions: List[Instruction]
     label_table: Dict[str, int]
+    macro_defined = False
 
     def __init__(self, path: str, source: str):
 
@@ -40,6 +41,9 @@ class Parser:
         return self.instructions, self.label_table
 
     def perform_checks(self):
+        if not self.macro_defined:
+            raise ParserException("At least one macro must be defined!")
+
         self.check_labels()
         self.check_images()
 
@@ -85,7 +89,7 @@ class Parser:
     def _parse_tree(self, tree: Tree):
         if tree.data != 'start':
             raise ParserException("Invalid tree passed: "
-                                  f"Expected 'start' tree, got '{tree.data}'")
+                                  f"Expected 'start', got '{tree.data}'")
 
         for child in tree.children:
             self._parse_macro(child)
@@ -93,7 +97,8 @@ class Parser:
     def _parse_macro(self, tree: Tree):
         if tree.data != 'macro' and tree.data != 'procedure':
             raise ParserException("Invalid tree passed: "
-                                  f"Expected 'macro' tree, got '{tree.data}'")
+                                  "Expected 'macro' or 'procedure', "
+                                  f"got '{tree.data}'")
 
         # noinspection PyTypeChecker
         name = self.parse_token(tree.children[0])
@@ -102,6 +107,7 @@ class Parser:
         self._parse_body(tree.children[1])
 
         if tree.data == 'macro':
+            self.macro_defined = True
             self.instructions.append(Command(Opcode.END))
             return
 
