@@ -7,7 +7,7 @@ from typing import Any, Dict, List, Optional, Tuple
 import pyautogui
 from pynput import keyboard
 
-from definitions.enums import Opcode
+from lib.enums import Opcode
 from definitions.exceptions import ConditionException, InterpretException, \
     MausMakroException, RetryException
 from definitions.general import Conditional, Instruction, Command, Stack

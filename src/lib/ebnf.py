@@ -1,4 +1,4 @@
-from definitions.enums import ArgType, Opcode
+from lib.enums import ArgType, Opcode
 
 ebnf = r"""
 %import common.INT

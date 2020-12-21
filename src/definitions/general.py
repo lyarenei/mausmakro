@@ -1,6 +1,6 @@
 from typing import Any, List, Optional
 
-from definitions.enums import Opcode
+from lib.enums import Opcode
 
 
 HISTORY_EXCL = [
