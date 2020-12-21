@@ -144,6 +144,13 @@ class Interpreter:
         elif command.opcode == Opcode.PAUSE:
             self.is_paused = True
 
+        elif command.opcode == Opcode.PCLICK:
+            self._do_click(command.arg, precise=True)
+
+        elif command.opcode == Opcode.PFIND:
+            self._find_image(command.arg[0], command.arg[1], grayscale=False,
+                             match_step=1)
+
         elif command.opcode == Opcode.RETURN:
             if self._call_stack.empty():
                 raise InterpretException("Cannot return, no caller!")
@@ -178,7 +185,7 @@ class Interpreter:
 
         self._program_counter = new_pc
 
-    def _do_click(self, args: Tuple[Any, Any], is_double=False):
+    def _do_click(self, args: Tuple[Any, Any], is_double=False, precise=False):
         clicks = 2 if is_double else 1
 
         if isinstance(args[0], int):
@@ -186,10 +193,13 @@ class Interpreter:
             pyautogui.click(x=args[0], y=args[1], clicks=clicks)
             return
 
-        coords = self._find_image(args[0],
-                                  args[1],
-                                  grayscale=not self.opts['color_match'],
-                                  match_step=self.opts['match_step'])
+        if precise:
+            coords = self._find_image(args[0], args[1], grayscale=False,
+                                      match_step=1)
+        else:
+            coords = self._find_image(args[0], args[1],
+                                      grayscale=not self.opts['color_match'],
+                                      match_step=self.opts['match_step'])
 
         pyautogui.click(*coords, clicks=clicks)
 

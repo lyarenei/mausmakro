@@ -21,6 +21,8 @@ class Opcode(EqualEnum):
     JUMP = 'jump'
     LABEL = 'label'
     PAUSE = 'pause'
+    PCLICK = 'pclick'
+    PFIND = 'pfind'
     RETURN = 'return'
     WAIT = 'wait'
 

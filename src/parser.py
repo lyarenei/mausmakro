@@ -136,9 +136,11 @@ class Parser:
             self._labels_to_check.append(arg)
             return Command(Opcode.CALL, arg)
 
-        elif opcode == Opcode.CLICK:
+        elif opcode == Opcode.CLICK \
+                or opcode == Opcode.PCLICK:
             if isinstance(arg[0], str):
                 self._images_to_check.append(arg[0])
+                return Command(Opcode(opcode), arg)
 
             return Command(Opcode.CLICK, arg)
 
@@ -148,9 +150,10 @@ class Parser:
 
             return Command(Opcode.DOUBLE_CLICK, arg)
 
-        elif opcode == Opcode.FIND:
+        elif opcode == Opcode.FIND \
+                or opcode == Opcode.PFIND:
             self._images_to_check.append(arg[0])
-            return Command(Opcode.FIND, arg)
+            return Command(Opcode(opcode), arg)
 
         elif opcode == Opcode.JUMP:
             self._labels_to_check.append(arg)
