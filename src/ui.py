@@ -19,7 +19,8 @@ class Ui(Observer):
         self._kb_listener.start()
 
     def update(self, msg_type: MessageType, msg_data: Any):
-        pass
+        if msg_type == MessageType.MESSAGE:
+            print(msg_data)
 
     def start(self,
               instructions: List[Instruction],

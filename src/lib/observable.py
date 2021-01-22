@@ -1,4 +1,4 @@
-from enum import Enum
+from enum import Enum, auto
 from typing import Any, List, TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -6,7 +6,7 @@ if TYPE_CHECKING:
 
 
 class MessageType(Enum):
-    pass
+    MESSAGE = auto()
 
 
 class Observable:
