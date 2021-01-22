@@ -57,8 +57,10 @@ class Interpreter(Observable):
         retries = 0
         while not self._exit_flag.is_set():
             self._cont_flag.wait()
-            instr = self._instructions[self._program_counter]
+            if self._exit_flag.is_set():
+                break
 
+            instr = self._instructions[self._program_counter]
             if instr.opcode == Opcode.END:
                 break
 
@@ -82,6 +84,7 @@ class Interpreter(Observable):
                     return
 
     def stop(self):
+        self._cont_flag.set()
         self._exit_flag.set()
 
     def _retry_instruction(self, instr: Instruction):
