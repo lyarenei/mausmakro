@@ -1,11 +1,13 @@
 import sys
 from datetime import datetime, timedelta
 from pathlib import Path
+from threading import Event, Thread
 from time import sleep
 from typing import Any, Dict, List, Optional, Tuple
 
 import pyautogui
 from pynput import keyboard
+from pynput.keyboard import Key
 
 from lib.enums import Opcode
 from lib.exceptions import ConditionException, InterpretException, \
@@ -16,14 +18,16 @@ from lib.types import Conditional, Instruction, Command, Stack
 class Interpreter:
 
     _call_stack: Stack
+    _cont_flag = Event()
+    _exit_flag = Event()
     _instructions: List[Instruction]
+    _interpret_thread: Thread
     _kb_listener: keyboard.Listener
     _label_table: Dict[str, int]
     _program_counter: int
 
     exit_requested = False
     go_back_on_fail: bool
-    is_paused = False
     opts: Dict[str, Any]
 
     def __init__(self, instructions,
@@ -44,11 +48,19 @@ class Interpreter:
         self._kb_listener.start()
 
     def interpret(self, macro: str):
+        self._interpret_thread = Thread(target=self._interpret,
+                                        args=[macro])
+
+        self._cont_flag.set()
+        self._interpret_thread.start()
+        self._interpret_thread.join()
+
+    def _interpret(self, macro: str):
         self._program_counter = self._label_table[macro]
         retries = 0
 
-        while not self.exit_requested:
-            self.prompt_if_paused()
+        while not self._exit_flag.is_set():
+            self._cont_flag.wait()
             instr = self._instructions[self._program_counter]
 
             if instr.opcode == Opcode.END:
@@ -59,7 +71,7 @@ class Interpreter:
                 self._program_counter += 1
 
             except MausMakroException as e:
-                if self.exit_requested:
+                if self._exit_flag.is_set():
                     break
 
                 print("Command execution failed")
@@ -75,7 +87,10 @@ class Interpreter:
         retries = 1
 
         while retries <= self.opts['retry_times']:
-            self.prompt_if_paused()
+            self._cont_flag.wait()
+            if self._exit_flag.is_set():
+                return
+
             print(f"Retries: {retries}/{self.opts['retry_times']}")
 
             try:
@@ -89,19 +104,15 @@ class Interpreter:
         raise RetryException("Maximum retries reached, giving up.")
 
     def _on_release(self, key):
-        try:
-            if key.char == 'p':
-                print("Pausing execution at the next possible moment...")
-                self.is_paused = True
+        if key == Key.ctrl:
+            if self._cont_flag.is_set():
+                print("Execution paused...")
+                self._cont_flag.clear()
 
-            elif key.char == 'x':
-                print("Exiting...")
-                self.is_paused = False
-                self.exit_requested = True
-
-        except AttributeError:
-            # Special key pressed
-            pass
+            else:
+                print("Resuming execution...")
+                sleep(1)
+                self._cont_flag.set()
 
     def _execute_instruction(self, instruction: Instruction):
         if isinstance(instruction, Command):
@@ -142,7 +153,7 @@ class Interpreter:
             return
 
         elif command.opcode == Opcode.PAUSE:
-            self.is_paused = True
+            self._cont_flag.clear()
 
         elif command.opcode == Opcode.PCLICK:
             self._do_click(command.arg, precise=True)
