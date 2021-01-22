@@ -70,10 +70,11 @@ class Interpreter(Observable):
                 if self._exit_flag.is_set():
                     break
 
-                print("Command execution failed")
+                self.notify(MessageType.MESSAGE, "Command execution failed")
                 if self.opts['enable_retry'] \
                    and retries <= self.opts['retry_times']:
-                    print("Command retry enabled, retrying command...")
+                    self.notify(MessageType.MESSAGE,
+                                "Command retry enabled, retrying command...")
                     self._retry_instruction(instr)
 
                 else:
