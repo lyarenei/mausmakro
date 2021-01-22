@@ -8,8 +8,7 @@ from lark import Lark, Token, Tree
 from lib.ebnf import ebnf
 from lib.enums import ArgType, Opcode
 from lib.types import Command, Conditional, Instruction
-from lib.exceptions import ImageException, LabelException, \
-    ParserException
+from lib.exceptions import ImageException, LabelException, ParserException
 
 
 class Parser:
