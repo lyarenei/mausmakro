@@ -25,6 +25,10 @@ class Ui(Observer):
         if msg_type == MessageType.MESSAGE:
             print(msg_data)
 
+        elif msg_type == MessageType.MAUSMAKRO_EXCEPTION:
+            print(f"An error occurred:\n{msg_data}")
+            self.stop()
+
     def start(self,
               macro: str,
               times: int,

@@ -9,6 +9,7 @@ if TYPE_CHECKING:
 
 class MessageType(Enum):
     MESSAGE = auto()
+    MAUSMAKRO_EXCEPTION = auto()
 
 
 class Observable:

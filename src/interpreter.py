@@ -78,7 +78,8 @@ class Interpreter(Observable):
                     self._retry_instruction(instr)
 
                 else:
-                    raise e
+                    self.notify(MessageType.MAUSMAKRO_EXCEPTION, str(e))
+                    return
 
     def stop(self):
         self._exit_flag.set()
