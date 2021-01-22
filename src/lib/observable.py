@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from enum import Enum, auto
 from typing import Any, List, TYPE_CHECKING
 
@@ -10,7 +12,6 @@ class MessageType(Enum):
 
 
 class Observable:
-
     _observers: List[Observer]
 
     def __init__(self):
