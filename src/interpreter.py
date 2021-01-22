@@ -22,7 +22,6 @@ class Interpreter(Observable):
     _label_table: Dict[str, int]
     _program_counter: int
 
-    exit_requested = False
     go_back_on_fail: bool
     opts: Dict[str, Any]
 
