@@ -9,10 +9,11 @@ import pyautogui
 from lib.enums import Opcode
 from lib.exceptions import ConditionException, InterpretException, \
     MausMakroException, RetryException
+from lib.observable import Observable, MessageType
 from lib.types import Conditional, Instruction, Command, Stack
 
 
-class Interpreter:
+class Interpreter(Observable):
 
     _call_stack: Stack
     _cont_flag = Event()
@@ -30,6 +31,7 @@ class Interpreter:
                  label_table: Dict[str, int],
                  opts: Dict[str, Any]):
 
+        super(Interpreter, self).__init__()
         self._call_stack = Stack()
         self._instructions = instructions
         self._label_table = label_table
@@ -50,12 +52,11 @@ class Interpreter:
 
     def toggle_execution(self):
         if self._cont_flag.is_set():
-            # TODO notify instead of print
-            print("Execution paused...")
+            self.notify(MessageType.MESSAGE, "Execution paused...")
             self._cont_flag.clear()
 
         else:
-            print("Resuming execution...")
+            self.notify(MessageType.MESSAGE, "Resuming execution...")
             sleep(1)
             self._cont_flag.set()
 
