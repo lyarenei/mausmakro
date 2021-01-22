@@ -44,7 +44,7 @@ instruction     : {Opcode.CALL.value}
 """ + r"""
 body            : "{" (instruction | conditional | neg_conditional)+ "}"
 """ + f"""
-conditional     : "IF" {Opcode.FIND.value} body ("ELSE" body)?
+conditional     : "IF" ({Opcode.FIND.value} | {Opcode.PFIND.value}) body ("ELSE" body)?
 procedure       : "PROC" {ArgType.NAME.name} body
 neg_conditional : "IF NOT" {Opcode.FIND.value} body ("ELSE" body)?
 macro           : "MACRO" {ArgType.NAME.name} body 
