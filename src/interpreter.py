@@ -225,7 +225,4 @@ class Interpreter(Observable):
             return self._fix_coords(coords)
 
         except pyautogui.ImageNotFoundException:
-            # Try again
-            pass
-
-        raise ConditionException("Image not found within the time limit")
+            raise ConditionException("Image not found within the time limit")
