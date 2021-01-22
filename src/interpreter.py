@@ -247,10 +247,3 @@ class Interpreter:
             sleep(1)
 
         raise ConditionException("Image not found within the time limit")
-
-    def prompt_if_paused(self):
-        if self.is_paused:
-            input("Macro paused. Press ENTER to resume")
-            print("Execution will resume in 5 seconds")
-            sleep(5)
-            self.is_paused = False
