@@ -2,3 +2,5 @@ lark
 pyautogui
 pynput
 click
+Pillow
+opencv-python
