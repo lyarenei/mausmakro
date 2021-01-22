@@ -1,5 +1,4 @@
 import sys
-from datetime import datetime, timedelta
 from pathlib import Path
 from threading import Event, Thread
 from time import sleep
@@ -229,21 +228,17 @@ class Interpreter:
             abs_path = Path(self.opts['file']).parent
             img_path = abs_path.joinpath(Path(f'images/{image}'))
 
-        deadline = datetime.now() + timedelta(seconds=timeout)
         print(f"Finding image .. {image}")
+        try:
+            coords = pyautogui.locateCenterOnScreen(str(img_path),
+                                                    grayscale=grayscale,
+                                                    step=match_step,
+                                                    minSearchTime=timeout)
+            print("Image found")
+            return self._fix_coords(coords)
 
-        while datetime.now() < deadline:
-            try:
-                coords = pyautogui.locateCenterOnScreen(str(img_path),
-                                                        grayscale=grayscale,
-                                                        step=match_step)
-                print("Image found")
-                return self._fix_coords(coords)
-
-            except pyautogui.ImageNotFoundException:
-                # Try again
-                pass
-
-            sleep(1)
+        except pyautogui.ImageNotFoundException:
+            # Try again
+            pass
 
         raise ConditionException("Image not found within the time limit")
