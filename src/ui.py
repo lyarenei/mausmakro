@@ -4,7 +4,7 @@ from pynput import keyboard
 from pynput.keyboard import Key
 
 from interpreter import Interpreter
-from lib.observable import ObservableMessage
+from lib.observable import MessageType
 from lib.observer import Observer
 from lib.types import Instruction
 
@@ -18,7 +18,7 @@ class Ui(Observer):
         self._kb_listener = keyboard.Listener(on_release=self._on_release)
         self._kb_listener.start()
 
-    def update(self, msg_type: ObservableMessage, msg_data: Any):
+    def update(self, msg_type: MessageType, msg_data: Any):
         pass
 
     def start(self,

@@ -5,7 +5,7 @@ if TYPE_CHECKING:
     from lib.observer import Observer
 
 
-class ObservableMessage(Enum):
+class MessageType(Enum):
     pass
 
 
@@ -22,6 +22,6 @@ class Observable:
     def unregister(self, observer: Observer):
         self._observers.remove(observer)
 
-    def notify(self, msg_type: ObservableMessage, msg_data: Any):
+    def notify(self, msg_type: MessageType, msg_data: Any):
         for observer in self._observers:
             observer.update(msg_type, msg_data)

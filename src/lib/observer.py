@@ -1,7 +1,7 @@
 from typing import Any, List, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from lib.observable import Observable, ObservableMessage
+    from lib.observable import Observable, MessageType
 
 
 class Observer:
@@ -17,5 +17,5 @@ class Observer:
     def unregister(self, observable: Observable):
         self._observables.remove(observable)
 
-    def update(self, msg_type: ObservableMessage, msg_data: Any):
+    def update(self, msg_type: MessageType, msg_data: Any):
         raise NotImplementedError
