@@ -1,6 +1,6 @@
 import sys
 from pathlib import Path
-from threading import Event, Thread
+from threading import Event
 from time import sleep
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -19,7 +19,6 @@ class Interpreter(Observable):
     _cont_flag = Event()
     _exit_flag = Event()
     _instructions: List[Instruction]
-    _interpret_thread: Thread
     _label_table: Dict[str, int]
     _program_counter: int
 
@@ -42,14 +41,6 @@ class Interpreter(Observable):
         # Throw exceptions instead of returning None
         pyautogui.useImageNotFoundException()
 
-    def interpret(self, macro: str):
-        self._interpret_thread = Thread(target=self._interpret,
-                                        args=[macro])
-
-        self._cont_flag.set()
-        self._interpret_thread.start()
-        self._interpret_thread.join()
-
     def toggle_execution(self):
         if self._cont_flag.is_set():
             self.notify(MessageType.MESSAGE, "Execution paused...")
@@ -60,10 +51,11 @@ class Interpreter(Observable):
             sleep(1)
             self._cont_flag.set()
 
-    def _interpret(self, macro: str):
+    def interpret(self, macro: str):
+        self._cont_flag.set()
         self._program_counter = self._label_table[macro]
-        retries = 0
 
+        retries = 0
         while not self._exit_flag.is_set():
             self._cont_flag.wait()
             instr = self._instructions[self._program_counter]

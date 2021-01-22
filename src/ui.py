@@ -1,3 +1,5 @@
+import sys
+from threading import Thread
 from typing import Any, Dict, List
 
 from pynput import keyboard
@@ -23,12 +25,30 @@ class Ui(Observer):
             print(msg_data)
 
     def start(self,
+              macro: str,
+              times: int,
               instructions: List[Instruction],
               label_table: Dict[str, int],
               opts: Dict[str, Any]):
-        # TODO create and register observable
-        # TODO start interpreting
-        pass
+
+        observable = Interpreter(instructions, label_table, opts)
+        observable.register(self)
+        self.register(observable)
+
+        iters = 0
+        while iters < times or times == -1:
+            try:
+                interpret_thread = Thread(target=observable.interpret,
+                                          args=[macro])
+
+                interpret_thread.start()
+                interpret_thread.join()
+
+            except Exception as e:
+                print(f"An error occurred when interpreting the macro:\n{e}")
+                sys.exit(2)
+
+            iters += 1
 
     def terminate(self):
         # TODO Stop interpreter, listening for keyboard and exit program
