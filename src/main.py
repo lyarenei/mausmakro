@@ -7,6 +7,7 @@ from interpreter import Interpreter
 from parsing import Parser
 from preprocessor import Preprocessor
 from recorder import Recorder
+from ui import Ui
 
 
 @click.group()
@@ -62,19 +63,22 @@ def interpret(file: str, macro: str, times: int, enable_retry: bool,
         print(f"An error occurred while parsing the file:\n{e}")
         sys.exit(1)
 
-    interpreter = Interpreter(instructions, label_table, opts)
-    iters = 0
+    program = Ui()
+    program.start(instructions, label_table, opts)
 
-    while iters < times or times == -1:
-        try:
-            interpreter.interpret(macro)
 
-        except Exception as e:
-            print(f"An error occurred when interpreting the macro:\n{e}")
-            sys.exit(2)
-
-        iters += 1
-
+    # interpreter = Interpreter(instructions, label_table, opts)
+    # iters = 0
+    #
+    # while iters < times or times == -1:
+    #     try:
+    #         interpreter.interpret(macro)
+    #
+    #     except Exception as e:
+    #         print(f"An error occurred when interpreting the macro:\n{e}")
+    #         sys.exit(2)
+    #
+    #     iters += 1
 
 if __name__ == '__main__':
     main()
