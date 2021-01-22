@@ -160,6 +160,9 @@ class Parser:
             return Command(Opcode.JUMP, arg)
 
         elif opcode == Opcode.LABEL:
+            if arg in self._labels_to_check:
+                raise LabelException(f"Label {arg} has been already defined!")
+
             self._add_label(arg)
             return Command(Opcode.LABEL, arg)
 
