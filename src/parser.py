@@ -228,7 +228,5 @@ class Parser:
         return ''.join(random.choice(letters) for _ in range(8))
 
     def _add_label(self, label: str):
-        if label in self._labels_to_check:
-            raise LabelException(f"Label {label} has been already defined!")
-
-        self._labels_to_check.append(label)
+        if label not in self._labels_to_check:
+            self._labels_to_check.append(label)
