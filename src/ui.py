@@ -52,13 +52,15 @@ class Ui(Observer):
 
             iters += 1
 
-    def terminate(self, signum, frame):
+    def stop(self):
         self._kb_listener.stop()
-        print("Waiting for all running processes to finish execution ..")
         for o in self._observables:
             if isinstance(o, Interpreter):
                 o.stop()
 
+    def terminate(self, signum, frame):
+        print("Waiting for all running processes to finish execution ..")
+        self.stop()
         sys.exit(1)
 
     def _on_release(self, key):
