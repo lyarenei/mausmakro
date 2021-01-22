@@ -5,8 +5,6 @@ from time import sleep
 from typing import Any, Dict, List, Optional, Tuple
 
 import pyautogui
-from pynput import keyboard
-from pynput.keyboard import Key
 
 from lib.enums import Opcode
 from lib.exceptions import ConditionException, InterpretException, \
@@ -21,7 +19,6 @@ class Interpreter:
     _exit_flag = Event()
     _instructions: List[Instruction]
     _interpret_thread: Thread
-    _kb_listener: keyboard.Listener
     _label_table: Dict[str, int]
     _program_counter: int
 
@@ -35,7 +32,6 @@ class Interpreter:
 
         self._call_stack = Stack()
         self._instructions = instructions
-        self._kb_listener = keyboard.Listener(on_release=self._on_release)
         self._label_table = label_table
         self._program_counter = 0
 
@@ -44,8 +40,6 @@ class Interpreter:
         # Throw exceptions instead of returning None
         pyautogui.useImageNotFoundException()
 
-        self._kb_listener.start()
-
     def interpret(self, macro: str):
         self._interpret_thread = Thread(target=self._interpret,
                                         args=[macro])
@@ -53,6 +47,17 @@ class Interpreter:
         self._cont_flag.set()
         self._interpret_thread.start()
         self._interpret_thread.join()
+
+    def toggle_execution(self):
+        if self._cont_flag.is_set():
+            # TODO notify instead of print
+            print("Execution paused...")
+            self._cont_flag.clear()
+
+        else:
+            print("Resuming execution...")
+            sleep(1)
+            self._cont_flag.set()
 
     def _interpret(self, macro: str):
         self._program_counter = self._label_table[macro]
@@ -101,17 +106,6 @@ class Interpreter:
                 retries += 1
 
         raise RetryException("Maximum retries reached, giving up.")
-
-    def _on_release(self, key):
-        if key == Key.ctrl:
-            if self._cont_flag.is_set():
-                print("Execution paused...")
-                self._cont_flag.clear()
-
-            else:
-                print("Resuming execution...")
-                sleep(1)
-                self._cont_flag.set()
 
     def _execute_instruction(self, instruction: Instruction):
         if isinstance(instruction, Command):
