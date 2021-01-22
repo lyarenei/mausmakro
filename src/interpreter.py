@@ -79,6 +79,9 @@ class Interpreter(Observable):
                 else:
                     raise e
 
+    def stop(self):
+        self._exit_flag.set()
+
     def _retry_instruction(self, instr: Instruction):
         retries = 1
 

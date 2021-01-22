@@ -1,3 +1,4 @@
+import signal
 import sys
 from threading import Thread
 from typing import Any, Dict, List
@@ -34,6 +35,7 @@ class Ui(Observer):
         observable = Interpreter(instructions, label_table, opts)
         observable.register(self)
         self.register(observable)
+        signal.signal(signal.SIGINT, self.terminate)
 
         iters = 0
         while iters < times or times == -1:
@@ -50,9 +52,14 @@ class Ui(Observer):
 
             iters += 1
 
-    def terminate(self):
-        # TODO Stop interpreter, listening for keyboard and exit program
-        pass
+    def terminate(self, signum, frame):
+        self._kb_listener.stop()
+        print("Waiting for all running processes to finish execution ..")
+        for o in self._observables:
+            if isinstance(o, Interpreter):
+                o.stop()
+
+        sys.exit(1)
 
     def _on_release(self, key):
         for o in self._observables:
