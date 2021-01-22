@@ -4,7 +4,7 @@ import sys
 import click
 
 from interpreter import Interpreter
-from parser import Parser
+from parsing import Parser
 from preprocessor import Preprocessor
 from recorder import Recorder
 
