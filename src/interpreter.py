@@ -78,6 +78,11 @@ class Interpreter(Observable):
                                 "Command retry enabled, retrying command...")
                     self._retry_instruction(instr)
 
+                elif self.opts['pause_on_fail']:
+                    self.notify(MessageType.MESSAGE,
+                                "Pause on fail option enabled.")
+                    self.toggle_execution()
+
                 else:
                     self.notify(MessageType.MAUSMAKRO_EXCEPTION, str(e))
                     return

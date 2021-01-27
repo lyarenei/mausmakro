@@ -41,15 +41,20 @@ def record(output):
               help="Image match step. Higher value means faster search, "
                    "but lowers accuracy. Recommended for higher res (>1080p) "
                    "displays. Defaults to 2.")
+@click.option('--pause-on-fail', is_flag=True,
+              help="Pause execution if current instruction fails, "
+                   "instead of exiting.")
 def interpret(file: str, macro: str, times: int, enable_retry: bool,
-              retry_times: int, color_match: bool, match_step: int):
+              retry_times: int, color_match: bool, match_step: int,
+              pause_on_fail: bool):
 
     opts = {
         'color_match': color_match,
         'enable_retry': enable_retry,
         'file': file,
         'match_step': match_step,
-        'retry_times': retry_times
+        'retry_times': retry_times,
+        'pause_on_fail': pause_on_fail
     }
 
     try:
