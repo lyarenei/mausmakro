@@ -62,6 +62,7 @@ def interpret(file: str, macro: str, times: int, enable_retry: bool,
         parser = Parser(file, file_content)
         instructions, label_table = parser.parse()
         parser.perform_checks()
+        parser.macro_exists(macro)
 
     except Exception as e:
         print(f"An error occurred while parsing the file:\n{e}")
