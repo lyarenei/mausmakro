@@ -81,7 +81,7 @@ class Interpreter(Observable):
                 elif self.opts['pause_on_fail']:
                     self.notify(MessageType.MESSAGE,
                                 "Pause on fail option enabled.")
-                    self.toggle_execution()
+                    self._cont_flag.clear()
 
                 else:
                     self.notify(MessageType.MAUSMAKRO_EXCEPTION, str(e))
