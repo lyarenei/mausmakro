@@ -1,4 +1,4 @@
-IMPORT xxx
+%IMPORT xxx
 
 MACRO foobar {
   WAIT 1s
