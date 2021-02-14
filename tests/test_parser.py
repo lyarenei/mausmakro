@@ -1,7 +1,8 @@
 import unittest
 
 from lib.enums import Opcode
-from lib.exceptions import ParserException, PreprocessorException
+from lib.exceptions import LabelException, ParserException, \
+    PreprocessorException
 from lib.types import Command
 from parsing import Parser
 from preprocessor import Preprocessor
@@ -107,4 +108,4 @@ class TestParser(unittest.TestCase):
         file_content = Preprocessor(filename).process()
         parser = Parser(filename, file_content)
         parser.parse()
-        self.assertRaises(ParserException, parser.perform_checks)
+        self.assertRaises(LabelException, parser.perform_checks)
