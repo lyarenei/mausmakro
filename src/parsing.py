@@ -8,7 +8,8 @@ from lark import Lark, Token, Tree, UnexpectedToken
 from lib.ebnf import ebnf
 from lib.enums import ArgType, Opcode
 from lib.types import Command, Conditional, Instruction
-from lib.exceptions import ImageException, LabelException, ParserException
+from lib.exceptions import ImageException, LabelException, MausMakroException, \
+    ParserException
 
 
 class Parser:
@@ -239,3 +240,7 @@ class Parser:
     def _add_label(self, label: str):
         if label not in self._labels_to_check:
             self._labels_to_check.append(label)
+
+    def macro_exists(self, macro: str):
+        if macro not in self.label_table:
+            raise MausMakroException(f"Macro {macro} is not defined!")
