@@ -3,7 +3,7 @@ import string
 from pathlib import Path
 from typing import Any, Dict, List, Tuple, Union
 
-from lark import Lark, Token, Tree
+from lark import Lark, Token, Tree, UnexpectedToken
 
 from lib.ebnf import ebnf
 from lib.enums import ArgType, Opcode
@@ -29,7 +29,14 @@ class Parser:
         self._source_path = path
 
         lark = Lark(ebnf, parser='lalr')
-        self._tree = lark.parse(source)
+        try:
+            self._tree = lark.parse(source)
+
+        except UnexpectedToken as e:
+            expected = set(t for t in e.expected if not t.startswith('__'))
+            msg = f"Invalid syntax on line {e.line}," \
+                  f" expected one of {expected}."
+            raise ParserException(msg)
 
         self.instructions = []
         self.label_table = {}
