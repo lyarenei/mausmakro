@@ -25,6 +25,7 @@ class TestParser(unittest.TestCase):
         self.assertListEqual(ins, expected_ins)
         self.assertDictEqual(labels, expected_labels)
 
+    @unittest.skip("Label command is not supported yet")
     def test_duplicate_label(self):
         filename = 'test_macros/duplicate_label.txt'
         file_content = Preprocessor(filename).process()
