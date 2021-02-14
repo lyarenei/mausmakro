@@ -45,9 +45,7 @@ class TestParser(unittest.TestCase):
     def test_empty_macro(self):
         filename = 'test_macros/empty_macro.txt'
         file_content = Preprocessor(filename).process()
-        parser = Parser(filename, file_content)
-        parser.parse()
-        self.assertRaises(ParserException, parser.perform_checks)
+        self.assertRaises(ParserException, Parser, filename, file_content)
 
     def test_import_statement(self):
         filename = 'test_macros/import_statement.txt'
