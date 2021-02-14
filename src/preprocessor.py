@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from lib.exceptions import ParserException
+from lib.exceptions import ParserException, PreprocessorException
 
 
 class Preprocessor:
@@ -26,19 +26,24 @@ class Preprocessor:
     def process(self, filename: str = None) -> str:
         filename = filename if filename else self.filename
         final_content = ''
-        with open(filename, 'r') as main_file:
-            for line in main_file.readlines():
-                if line.startswith('%IMPORT'):
-                    f = self._get_filename(line)
-                    path = Path(f)
+        try:
+            with open(filename, 'r') as main_file:
+                for line in main_file.readlines():
+                    if line.startswith('%IMPORT'):
+                        f = self._get_filename(line)
+                        path = Path(f)
 
-                    if not path.is_absolute():
-                        abs_path = Path(self._source_path)
-                        path = abs_path.joinpath(Path(f))
+                        if not path.is_absolute():
+                            abs_path = Path(self._source_path)
+                            path = abs_path.joinpath(Path(f))
 
-                    final_content += self.process(path)
+                        final_content += self.process(path)
 
-                else:
-                    final_content += line
+                    else:
+                        final_content += line
+
+        except FileNotFoundError:
+            raise PreprocessorException("Failed to import file "
+                                        f"{filename}, file not found.")
 
         return final_content

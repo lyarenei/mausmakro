@@ -29,5 +29,9 @@ class ParserException(MausMakroException):
     pass
 
 
+class PreprocessorException(MausMakroException):
+    pass
+
+
 class RetryException(MausMakroException):
     pass
