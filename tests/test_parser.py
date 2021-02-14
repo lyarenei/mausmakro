@@ -1,7 +1,7 @@
 import unittest
 
 from lib.enums import Opcode
-from lib.exceptions import ParserException
+from lib.exceptions import ParserException, PreprocessorException
 from lib.types import Command
 from parsing import Parser
 from preprocessor import Preprocessor
@@ -68,10 +68,8 @@ class TestParser(unittest.TestCase):
 
     def test_import_statement_invalid(self):
         filename = 'test_macros/import_statement_invalid.txt'
-        file_content = Preprocessor(filename).process()
-        parser = Parser(filename, file_content)
-        parser.parse()
-        self.assertRaises(ParserException, parser.perform_checks)
+        preprocessor = Preprocessor(filename)
+        self.assertRaises(PreprocessorException, preprocessor.process)
 
     def test_indents_newlines(self):
         filename = 'test_macros/indents_newlines.txt'
