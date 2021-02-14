@@ -16,6 +16,9 @@ class Command(Instruction):
         self.opcode = opcode
         self.arg = arg
 
+    def __eq__(self, other):
+        return self.opcode == other.opcode and self.arg == other.arg
+
 
 class Conditional(Instruction):
 
