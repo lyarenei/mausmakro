@@ -1,0 +1,3 @@
+MACRO foobar {
+  JUMP TO foobaz
+}

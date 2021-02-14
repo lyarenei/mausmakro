@@ -1,0 +1,4 @@
+MACRO foobar {
+  LABEL bar
+  LABEL bar
+}

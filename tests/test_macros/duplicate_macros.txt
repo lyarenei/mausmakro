@@ -1,0 +1,7 @@
+MACRO foobar {
+  WAIT 1s
+}
+
+MACRO foobar {
+  WAIT 4s
+}

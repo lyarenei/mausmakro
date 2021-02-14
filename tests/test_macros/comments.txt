@@ -1,0 +1,14 @@
+# This is a comment
+
+# # this is a second comment
+
+
+                # indented foobar comment
+
+## comment 3
+
+# comment # WITHIN COMMENT
+
+MACRO foobar {
+  WAIT 1s
+}

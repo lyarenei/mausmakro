@@ -1,0 +1,3 @@
+PROC foo {
+    CLICK 1,1
+}
