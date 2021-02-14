@@ -92,12 +92,11 @@ class TestParser(unittest.TestCase):
         file_content = Preprocessor(filename).process()
         ins, labels = Parser(filename, file_content).parse()
 
-        expected_labels = {'foobar': 0}
+        expected_labels = {'foo': 0}
         expected_ins = [
-            Command(Opcode.LABEL, 'foobar'),
-            Command(Opcode.WAIT, 5),
-            Command(Opcode.JUMP, 'foobar'),
-            Command(Opcode.END),
+            Command(Opcode.LABEL, 'foo'),
+            Command(Opcode.CLICK, (1, 1)),
+            Command(Opcode.RETURN),
         ]
 
         self.assertListEqual(ins, expected_ins)
