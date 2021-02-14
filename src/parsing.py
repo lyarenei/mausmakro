@@ -101,6 +101,9 @@ class Parser:
 
         # noinspection PyTypeChecker
         name = self.parse_token(tree.children[0])
+        if name in self._labels_to_check:
+            raise ParserException(f"Label '{name}' was already defined!")
+
         self._add_label(name)
         self.instructions.append(Command(Opcode.LABEL, name))
         self._parse_body(tree.children[1])
