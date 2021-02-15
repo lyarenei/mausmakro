@@ -73,7 +73,7 @@ class Parser:
                                      "Please make sure to put the images "
                                      "inside implicit 'images' directory "
                                      "at the specified macro file "
-                                     "location if not using absolute "
+                                     "location or use absolute "
                                      "paths for the images.")
 
     def _get_label_mappings(self):
