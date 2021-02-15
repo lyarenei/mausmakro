@@ -1,0 +1,4 @@
+MACRO foobar {
+    WAIT 1s
+    CLICK 1,1
+}
