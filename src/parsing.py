@@ -14,8 +14,9 @@ from lib.exceptions import ImageException, LabelException, MausMakroException, \
 
 class Parser:
 
+    _defined_labels: List[str]
+    _called_labels: List[str]
     _images_to_check: List[str]
-    _labels_to_check: List[str]
     _source_path: str
     _tree: Union[Tree, Tree]
 
@@ -25,8 +26,9 @@ class Parser:
 
     def __init__(self, path: str, source: str):
 
+        self._defined_labels = []
+        self._called_labels = []
         self._images_to_check = []
-        self._labels_to_check = []
         self._source_path = path
 
         lark = Lark(ebnf, parser='lalr')
@@ -55,12 +57,8 @@ class Parser:
         self.check_images()
 
     def check_labels(self):
-        while self._labels_to_check:
-            label = self._labels_to_check[0]
-            if self._find_label(label):
-                self._labels_to_check.remove(label)
-
-            else:
+        for label in self._called_labels:
+            if not self._find_label(label):
                 raise LabelException(f"Label {label} is not defined!")
 
     def check_images(self):
@@ -109,10 +107,7 @@ class Parser:
 
         # noinspection PyTypeChecker
         name = self.parse_token(tree.children[0])
-        if name in self._labels_to_check:
-            raise ParserException(f"Label '{name}' was already defined!")
-
-        self._add_label(name)
+        self._define_label(name)
         self.instructions.append(Command(Opcode.LABEL, name))
         self._parse_body(tree.children[1])
 
@@ -143,11 +138,10 @@ class Parser:
         arg = arg[0] if len(arg) == 1 else arg
 
         if opcode == Opcode.CALL:
-            self._labels_to_check.append(arg)
+            self._add_called_label(arg)
             return Command(Opcode.CALL, arg)
 
-        elif opcode == Opcode.CLICK \
-                or opcode == Opcode.PCLICK:
+        elif opcode == Opcode.CLICK or opcode == Opcode.PCLICK:
             if isinstance(arg[0], str):
                 self._images_to_check.append(arg[0])
                 return Command(Opcode(opcode), arg)
@@ -160,20 +154,16 @@ class Parser:
 
             return Command(Opcode.DOUBLE_CLICK, arg)
 
-        elif opcode == Opcode.FIND \
-                or opcode == Opcode.PFIND:
+        elif opcode == Opcode.FIND or opcode == Opcode.PFIND:
             self._images_to_check.append(arg[0])
             return Command(Opcode(opcode), arg)
 
         elif opcode == Opcode.JUMP:
-            self._labels_to_check.append(arg)
+            self._add_called_label(arg)
             return Command(Opcode.JUMP, arg)
 
         elif opcode == Opcode.LABEL:
-            if arg in self._labels_to_check:
-                raise LabelException(f"Label {arg} has been already defined!")
-
-            self._add_label(arg)
+            self._define_label(arg)
             return Command(Opcode.LABEL, arg)
 
         elif opcode == Opcode.PAUSE:
@@ -237,10 +227,16 @@ class Parser:
         letters = string.ascii_letters
         return ''.join(random.choice(letters) for _ in range(8))
 
-    def _add_label(self, label: str):
-        if label not in self._labels_to_check:
-            self._labels_to_check.append(label)
+    def _add_called_label(self, label: str):
+        if label not in self._called_labels:
+            self._called_labels.append(label)
 
     def macro_exists(self, macro: str):
         if macro not in self.label_table:
             raise MausMakroException(f"Macro {macro} is not defined!")
+
+    def _define_label(self, label: str):
+        if label in self._defined_labels:
+            raise ParserException(f"Label '{label}' is already in use!")
+
+        self._defined_labels.append(label)
