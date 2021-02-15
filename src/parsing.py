@@ -58,7 +58,7 @@ class Parser:
 
     def check_labels(self):
         for label in self._called_labels:
-            if not self._find_label(label):
+            if label not in self._defined_labels:
                 raise LabelException(f"Label {label} is not defined!")
 
     def check_images(self):
@@ -75,15 +75,6 @@ class Parser:
                                      "at the specified macro file "
                                      "location if not using absolute "
                                      "paths for the images.")
-
-    def _find_label(self, label: str) -> bool:
-        for instr in self.instructions:
-            if instr.opcode == Opcode.LABEL:
-                instr: Command
-                if instr.arg == label:
-                    return True
-
-        return False
 
     def _get_label_mappings(self):
         for i, ins in enumerate(self.instructions):
