@@ -2,7 +2,7 @@ import unittest
 
 from lark import Token
 
-from parsing import Parser
+from mausmakro.parsing import Parser
 
 
 class TestParseToken(unittest.TestCase):

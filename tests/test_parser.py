@@ -1,11 +1,11 @@
 import unittest
 
-from lib.enums import Opcode
-from lib.exceptions import LabelException, ParserException, \
+from mausmakro.lib.enums import Opcode
+from mausmakro.lib.exceptions import LabelException, ParserException, \
     PreprocessorException
-from lib.types import Command
-from parsing import Parser
-from preprocessor import Preprocessor
+from mausmakro.lib.types import Command
+from mausmakro.parsing import Parser
+from mausmakro.preprocessor import Preprocessor
 
 
 class TestParser(unittest.TestCase):
