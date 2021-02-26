@@ -26,6 +26,7 @@ INDENT                         : /\t| {4}| {2}/
 {Opcode.DOUBLE_CLICK.value}    : "{Opcode.DOUBLE_CLICK.name}" {ArgType.COORDS.name}
 {Opcode.FIND.value}            : "{Opcode.FIND.name}" {ArgType.FILE.name} "WITHIN" {ArgType.TIME.name}
 {Opcode.JUMP.value}            : "{Opcode.JUMP.name}" "TO" {ArgType.NAME.name}
+{Opcode.LABEL.value}           : "{Opcode.LABEL.name}" {ArgType.NAME.name}
 {Opcode.PAUSE.value}           : "{Opcode.PAUSE.name}"
 {Opcode.PCLICK.value}          : "{Opcode.PCLICK.name}" ({ArgType.COORDS.name} | "ON" {ArgType.FILE.name} "WITHIN" {ArgType.TIME.name})
 {Opcode.PFIND.value}           : "{Opcode.PFIND.name}" {ArgType.FILE.name} "WITHIN" {ArgType.TIME.name}
@@ -37,6 +38,7 @@ instruction     : {Opcode.CALL.value}
                 | {Opcode.DOUBLE_CLICK.value}
                 | {Opcode.FIND.value}
                 | {Opcode.JUMP.value}
+                | {Opcode.LABEL.value}
                 | {Opcode.PAUSE.value}
                 | {Opcode.PCLICK.value}
                 | {Opcode.PFIND.value}
