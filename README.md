@@ -23,7 +23,7 @@ The macros are written in their own simple language. As the language kind of res
 a programming language, it also includes some extra bits which allows you to write a more
 complex macros:
 - Branching support (if-else)
-- Jumping - and by extension a simple loops
+- Jumping - and by extension simple loops
 - Procedure calling (code re-usability)
 
 
