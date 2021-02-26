@@ -44,7 +44,7 @@ in [Development](#development) section.
 ### Writing macros
 Writing macros is pretty easy, albeit a bit time-consuming, especially if you are writing
 a more complex one. If you are more of a technical person, who knows what EBNF is, you can
-follow the EBNF [here](src/lib/README.md#EBNF). Otherwise, there are a few rules:
+follow the EBNF [here](mausmakro/lib/README.md#EBNF). Otherwise, there are a few rules:
 - The input file must contain at least one macro
 - Every code body (macro, procedure, if/else) begins with `{` and ends with `}`
 - A Macro/procedure always requires a unique label
@@ -52,7 +52,7 @@ follow the EBNF [here](src/lib/README.md#EBNF). Otherwise, there are a few rules
 - Macros/procedures cannot be nested
 - IF statement may have an ELSE branch
 
-All available commands are described [here](src/lib/README.md#available-commands)
+All available commands are described [here](mausmakro/lib/README.md#available-commands)
 
 
 ## Development
