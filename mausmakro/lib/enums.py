@@ -9,7 +9,6 @@ class EqualEnum(Enum):
 
 
 class Opcode(EqualEnum):
-
     CALL = 'call'
     CLICK = 'click'
     DOUBLE_CLICK = 'double_click'
