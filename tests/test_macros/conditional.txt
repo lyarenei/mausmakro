@@ -1,0 +1,5 @@
+MACRO foobar {
+  IF FIND image.png WITHIN 5s {
+    WAIT 4s
+  }
+}
