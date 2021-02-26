@@ -27,6 +27,13 @@ class Conditional(Instruction):
     def __init__(self, opcode: Opcode):
         self.opcode = opcode
 
+    def __eq__(self, other):
+        return self.opcode == other.opcode and \
+               self.condition == other.condition and \
+               self.negate == other.negate and \
+               self.end_label == other.end_label and \
+               self.else_label == other.else_label
+
 
 class Macro:
     name: str
