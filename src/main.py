@@ -6,6 +6,7 @@ import click
 from parsing import Parser
 from preprocessor import Preprocessor
 from recorder import Recorder
+from show_coords import ShowCoords
 from ui import Ui
 
 
@@ -20,6 +21,12 @@ def main():
 def record(output):
     rec = Recorder(output)
     rec.record()
+
+
+@main.command()
+def show_coords():
+    show = ShowCoords()
+    show.start()
 
 
 @main.command()
