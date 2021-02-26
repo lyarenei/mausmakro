@@ -29,8 +29,7 @@ class TestParser(unittest.TestCase):
         filename = 'test_macros/duplicate_label.txt'
         file_content = Preprocessor(filename).process()
         parser = Parser(filename, file_content)
-        parser.parse()
-        self.assertRaises(ParserException, parser.perform_checks)
+        self.assertRaises(ParserException, parser.parse)
 
     def test_duplicate_macro(self):
         filename = 'test_macros/duplicate_macros.txt'
