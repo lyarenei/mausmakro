@@ -10,15 +10,17 @@ from mausmakro.parsing import Parser
 from mausmakro.preprocessor import Preprocessor
 
 
+# noinspection PyUnresolvedReferences
+# Initialized in TestParser.setUp method
 def mock_generate_label(_):
     mock_generate_label.cnt += 1
     return f'fbartest_{mock_generate_label.cnt}'
 
 
-mock_generate_label.cnt = 0
-
-
 class TestParser(unittest.TestCase):
+
+    def setUp(self) -> None:
+        mock_generate_label.cnt = 0
 
     def test_comments(self):
         filename = 'test_macros/comments.txt'
