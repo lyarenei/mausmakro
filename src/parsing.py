@@ -3,7 +3,7 @@ import string
 from pathlib import Path
 from typing import Any, Dict, List, Tuple, Union
 
-from lark import Lark, Token, Tree, UnexpectedToken
+from lark import Lark, Token, Tree, UnexpectedCharacters, UnexpectedToken
 
 from lib.ebnf import ebnf
 from lib.enums import ArgType, Opcode
@@ -39,6 +39,11 @@ class Parser:
             expected = set(t for t in e.expected if not t.startswith('__'))
             msg = f"Invalid syntax on line {e.line}," \
                   f" expected one of {expected}."
+            raise ParserException(msg)
+
+        except UnexpectedCharacters as e:
+            msg = f"Invalid character on line {e.line}!" \
+                  f" Please make sure to use ASCII characters only."
             raise ParserException(msg)
 
         self.instructions = []
