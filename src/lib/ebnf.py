@@ -18,8 +18,8 @@ INDENT                         : /\t| {4}| {2}/
 """ + f"""
 {ArgType.NAME.name}            : (LETTER | "_" | "-" | DIGIT)+
 {ArgType.FILE.name}            : FILENAME "." EXTENSION
-{ArgType.COORDS.name}          : INT "," INT
-{ArgType.TIME.name}            : INT ("s" | "m" | "h")
+{ArgType.COORDS.name}          : INT WS* "," WS* INT
+{ArgType.TIME.name}            : INT WS* ("s" | "m" | "h")
 
 {Opcode.CALL.value}            : "{Opcode.CALL.name}" {ArgType.NAME.name}
 {Opcode.CLICK.value}           : "{Opcode.CLICK.name}" ({ArgType.COORDS.name} | "ON" {ArgType.FILE.name} "WITHIN" {ArgType.TIME.name})
