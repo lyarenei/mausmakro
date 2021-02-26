@@ -1,0 +1,6 @@
+MACRO fO0-bA_r {
+  WAIT 1s
+}
+
+
+

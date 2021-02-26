@@ -89,6 +89,11 @@ class TestParser(unittest.TestCase):
         self.assertListEqual(ins, expected_ins)
         self.assertDictEqual(labels, expected_labels)
 
+    def test_invalid_name(self):
+        filename = 'test_macros/invalid_name.txt'
+        file_content = Preprocessor(filename).process()
+        self.assertRaises(ParserException, Parser, filename, file_content)
+
     def test_procedure(self):
         filename = 'test_macros/procedure.txt'
         file_content = Preprocessor(filename).process()
@@ -99,6 +104,21 @@ class TestParser(unittest.TestCase):
             Command(Opcode.LABEL, 'foo'),
             Command(Opcode.CLICK, (1, 1)),
             Command(Opcode.RETURN),
+        ]
+
+        self.assertListEqual(ins, expected_ins)
+        self.assertDictEqual(labels, expected_labels)
+
+    def test_valid_name(self):
+        filename = 'test_macros/valid_name.txt'
+        file_content = Preprocessor(filename).process()
+        ins, labels = Parser(filename, file_content).parse()
+
+        expected_labels = {'fO0-bA_r': 0}
+        expected_ins = [
+            Command(Opcode.LABEL, 'fO0-bA_r'),
+            Command(Opcode.WAIT, 1),
+            Command(Opcode.END),
         ]
 
         self.assertListEqual(ins, expected_ins)
