@@ -1,5 +1,4 @@
 import unittest
-from unittest import mock
 from unittest.mock import patch
 
 from mausmakro.lib.enums import Opcode
@@ -37,17 +36,15 @@ class TestParser(unittest.TestCase):
         self.assertListEqual(ins, expected_ins)
         self.assertDictEqual(labels, expected_labels)
 
-    @mock.patch('mausmakro.parsing.Parser._generate_label')
-    def test_conditional(self, _generate_label):
-        _generate_label.return_value = 'fbartest'
-
+    @patch.object(Parser, '_generate_label', mock_generate_label)
+    def test_conditional(self):
         filename = 'test_macros/conditional.txt'
         file_content = Preprocessor(filename).process()
         ins, labels = Parser(filename, file_content).parse()
 
         cond = Conditional(Opcode.IF)
         cond.condition = Command(Opcode.FIND, ('image.png', 5))
-        cond.end_label = 'fbartest'
+        cond.end_label = 'fbartest_1'
         cond.else_label = None
 
         expected_labels = {'foobar': 0, cond.end_label: 3}
