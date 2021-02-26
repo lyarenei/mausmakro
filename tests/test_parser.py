@@ -1,5 +1,6 @@
 import unittest
 from unittest import mock
+from unittest.mock import patch
 
 from mausmakro.lib.enums import Opcode
 from mausmakro.lib.exceptions import LabelException, ParserException, \
@@ -7,6 +8,14 @@ from mausmakro.lib.exceptions import LabelException, ParserException, \
 from mausmakro.lib.types import Command, Conditional
 from mausmakro.parsing import Parser
 from mausmakro.preprocessor import Preprocessor
+
+
+def mock_generate_label(_):
+    mock_generate_label.cnt += 1
+    return f'fbartest_{mock_generate_label.cnt}'
+
+
+mock_generate_label.cnt = 0
 
 
 class TestParser(unittest.TestCase):
@@ -44,6 +53,32 @@ class TestParser(unittest.TestCase):
             Command(Opcode.LABEL, 'foobar'),
             cond,
             Command(Opcode.WAIT, 4),
+            Command(Opcode.LABEL, cond.end_label),
+            Command(Opcode.END),
+        ]
+
+        self.assertListEqual(ins, expected_ins)
+        self.assertDictEqual(labels, expected_labels)
+
+    @patch.object(Parser, '_generate_label', mock_generate_label)
+    def test_conditional_else(self):
+        filename = 'test_macros/conditional_else.txt'
+        file_content = Preprocessor(filename).process()
+        ins, labels = Parser(filename, file_content).parse()
+
+        cond = Conditional(Opcode.IF)
+        cond.condition = Command(Opcode.FIND, ('image.png', 5))
+        cond.end_label = 'fbartest_1'
+        cond.else_label = 'fbartest_2'
+
+        expected_labels = {'foobar': 0, cond.else_label: 4, cond.end_label: 6}
+        expected_ins = [
+            Command(Opcode.LABEL, 'foobar'),
+            cond,
+            Command(Opcode.WAIT, 4),
+            Command(Opcode.JUMP, cond.end_label),
+            Command(Opcode.LABEL, cond.else_label),
+            Command(Opcode.WAIT, 5),
             Command(Opcode.LABEL, cond.end_label),
             Command(Opcode.END),
         ]
