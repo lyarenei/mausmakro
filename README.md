@@ -16,7 +16,8 @@ the features I needed. So I decided to write my own, completely free.
 - Image detection (find a picture on the screen)
     - This includes clicking on the image if it's found
 - A simple recorder of the user's actions (only clicking and waiting is recorded)
-    - This is useful for quick and dirty macro creation (and getting coordinates)
+    - This is useful for quick and dirty macro creation
+- Mouse coords display mode, so you know where the pointer clicks
 - Infinite macro replays (often required a licence in other software)
 
 The macros are written in their own simple language. As the language kind of resembles
