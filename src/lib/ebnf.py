@@ -1,8 +1,9 @@
 from lib.enums import ArgType, Opcode
 
 ebnf = r"""
+%import common.DIGIT
 %import common.INT
-%import common.LCASE_LETTER
+%import common.LETTER
 %import common.NEWLINE
 %import common.WS
 
@@ -15,7 +16,7 @@ FILENAME                       : /[\w\-_\/]+/
 EXTENSION                      : "jpeg" | "jpg" | "png"
 INDENT                         : /\t| {4}| {2}/
 """ + f"""
-{ArgType.NAME.name}            : (LCASE_LETTER | "_" | "-")+
+{ArgType.NAME.name}            : (LETTER | "_" | "-" | DIGIT)+
 {ArgType.FILE.name}            : FILENAME "." EXTENSION
 {ArgType.COORDS.name}          : INT "," INT
 {ArgType.TIME.name}            : INT ("s" | "m" | "h")
