@@ -4,12 +4,10 @@ from mausmakro.lib.enums import Opcode
 
 
 class Instruction:
-
     opcode: Opcode
 
 
 class Command(Instruction):
-
     arg: Any
 
     def __init__(self, opcode: Opcode, arg: Any = None):
@@ -21,7 +19,6 @@ class Command(Instruction):
 
 
 class Conditional(Instruction):
-
     condition: Command
     negate = False
     end_label: str
@@ -32,7 +29,6 @@ class Conditional(Instruction):
 
 
 class Macro:
-
     name: str
     body: List[Instruction]
 
