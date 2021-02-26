@@ -1,6 +1,6 @@
 from typing import Any, List, Optional
 
-from lib.enums import Opcode
+from mausmakro.lib.enums import Opcode
 
 
 class Instruction:

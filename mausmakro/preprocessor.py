@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from lib.exceptions import ParserException, PreprocessorException
+from mausmakro.lib.exceptions import ParserException, PreprocessorException
 
 
 class Preprocessor:

@@ -5,15 +5,14 @@ from typing import Any, Dict, List, Tuple, Union
 
 from lark import Lark, Token, Tree, UnexpectedCharacters, UnexpectedToken
 
-from lib.ebnf import ebnf
-from lib.enums import ArgType, Opcode
-from lib.types import Command, Conditional, Instruction
-from lib.exceptions import ImageException, LabelException, MausMakroException, \
-    ParserException
+from mausmakro.lib.ebnf import ebnf
+from mausmakro.lib.enums import ArgType, Opcode
+from mausmakro.lib.exceptions import ImageException, LabelException, \
+    MausMakroException, ParserException
+from mausmakro.lib.types import Command, Conditional, Instruction
 
 
 class Parser:
-
     _defined_labels: List[str]
     _called_labels: List[str]
     _images_to_check: List[str]

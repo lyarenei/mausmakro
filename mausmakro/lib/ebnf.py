@@ -1,4 +1,4 @@
-from lib.enums import ArgType, Opcode
+from mausmakro.lib.enums import ArgType, Opcode
 
 ebnf = r"""
 %import common.DIGIT

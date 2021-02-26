@@ -6,10 +6,10 @@ from typing import Any, Dict, List
 from pynput import keyboard
 from pynput.keyboard import Key
 
-from interpreter import Interpreter
-from lib.observable import MessageType
-from lib.observer import Observer
-from lib.types import Instruction
+from mausmakro.interpreter import Interpreter
+from mausmakro.lib.observable import MessageType
+from mausmakro.lib.observer import Observer
+from mausmakro.lib.types import Instruction
 
 
 class Ui(Observer):

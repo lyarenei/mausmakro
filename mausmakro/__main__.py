@@ -3,11 +3,11 @@ import sys
 
 import click
 
-from parsing import Parser
-from preprocessor import Preprocessor
-from recorder import Recorder
-from show_coords import ShowCoords
-from ui import Ui
+from mausmakro.parsing import Parser
+from mausmakro.preprocessor import Preprocessor
+from mausmakro.recorder import Recorder
+from mausmakro.show_coords import ShowCoords
+from mausmakro.ui import Ui
 
 
 @click.group()

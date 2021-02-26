@@ -6,11 +6,11 @@ from typing import Any, Dict, List, Optional, Tuple
 
 import pyautogui
 
-from lib.enums import Opcode
-from lib.exceptions import ConditionException, InterpretException, \
+from mausmakro.lib.enums import Opcode
+from mausmakro.lib.exceptions import ConditionException, InterpretException, \
     MausMakroException, RetryException
-from lib.observable import Observable, MessageType
-from lib.types import Conditional, Instruction, Command, Stack
+from mausmakro.lib.observable import Observable, MessageType
+from mausmakro.lib.types import Conditional, Instruction, Command, Stack
 
 
 class Interpreter(Observable):
