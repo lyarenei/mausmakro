@@ -141,10 +141,12 @@ class Interpreter(Observable):
             sys.exit(0)
 
         elif command.opcode == Opcode.FIND:
-            self._find_image(command.arg[0],
-                             command.arg[1],
-                             grayscale=not self.opts['color_match'],
-                             match_step=self.opts['match_step'])
+            self._find_image(
+                command.arg[0],
+                command.arg[1],
+                grayscale=not self.opts['color_match'],
+                match_step=self.opts['match_step']
+            )
 
         elif command.opcode == Opcode.JUMP:
             print(f"Jump to {command.arg}")
@@ -176,8 +178,10 @@ class Interpreter(Observable):
             sleep(command.arg)
 
         else:
-            raise NotImplementedError(f"Instruction {command.opcode} "
-                                      "is not implemented!")
+            raise NotImplementedError(
+                f"Instruction {command.opcode} "
+                "is not implemented!"
+            )
 
     def _execute_conditional(self, cond: Conditional):
         try:
@@ -207,12 +211,19 @@ class Interpreter(Observable):
             return
 
         if precise:
-            coords = self._find_image(args[0], args[1], grayscale=False,
-                                      match_step=1)
+            coords = self._find_image(
+                args[0],
+                args[1],
+                grayscale=False,
+                match_step=1
+            )
         else:
-            coords = self._find_image(args[0], args[1],
-                                      grayscale=not self.opts['color_match'],
-                                      match_step=self.opts['match_step'])
+            coords = self._find_image(
+                args[0],
+                args[1],
+                grayscale=not self.opts['color_match'],
+                match_step=self.opts['match_step']
+            )
 
         pyautogui.click(*coords, clicks=clicks)
 
@@ -233,10 +244,12 @@ class Interpreter(Observable):
 
         print(f"Finding image .. {image}")
         try:
-            coords = pyautogui.locateCenterOnScreen(str(img_path),
-                                                    grayscale=grayscale,
-                                                    step=match_step,
-                                                    minSearchTime=timeout)
+            coords = pyautogui.locateCenterOnScreen(
+                str(img_path),
+                grayscale=grayscale,
+                step=match_step,
+                minSearchTime=timeout
+            )
             print("Image found")
             return self._fix_coords(coords)
 
