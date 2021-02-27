@@ -27,3 +27,6 @@ class Observable:
     def notify(self, msg_type: MessageType, msg_data: Any):
         for observer in self._observers:
             observer.update(msg_type, msg_data)
+
+    def notify_msg(self, msg: str):
+        return self.notify(MessageType.MESSAGE, msg)
