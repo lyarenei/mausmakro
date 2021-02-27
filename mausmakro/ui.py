@@ -25,7 +25,7 @@ class Ui(Observer):
             print(msg_data)
 
         elif msg_type == MessageType.MAUSMAKRO_EXCEPTION:
-            print(f"An error occurred:\n{msg_data}")
+            print(f"An error occurred:\n{msg_data}", file=sys.stderr)
             self.stop()
 
     def start(self,
@@ -50,7 +50,10 @@ class Ui(Observer):
                 interpret_thread.join()
 
             except Exception as e:
-                print(f"An error occurred when interpreting the macro:\n{e}")
+                print(
+                    f"An error occurred when interpreting the macro:\n{e}",
+                    file=sys.stderr
+                )
                 sys.exit(2)
 
             iters += 1
