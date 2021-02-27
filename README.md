@@ -36,9 +36,13 @@ I verified it works there, but unfortunately, I don't have a linux desktop, so I
 
 ### How to use
 Mausmakro is fairly straightforward to use, it takes a file with macros as an input and then does its thing.  
-There are no releases (at least not yet), so at this moment you need to clone the repository
-and install the requirements, preferably in the virtual environment as described 
-in [Development](#development) section.
+At this moment, Mausmakro can be installed from test pip instance: `pip install -i https://test.pypi.org/simple/ mausmakro`
+Alternatively, you can clone this repository and install it locally: `pip install .`
+
+There are three modes available, record, show-coords and interpret.
+An example for interpreting a macro can be `python -m mausmakro interpret -f foobar.mkr -m save_me`
+Which will interpret macro named `save_me` in file `foobar.mkr` in an infinite loop.
+To see other options, use `--help` parameter.
 
 
 ### Writing macros
