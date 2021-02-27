@@ -7,7 +7,6 @@ if TYPE_CHECKING:
 
 
 class Observer:
-
     _observables: List[Observable]
 
     def __init__(self):

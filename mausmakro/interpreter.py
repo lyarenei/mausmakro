@@ -9,12 +9,11 @@ import pyautogui
 from mausmakro.lib.enums import Opcode
 from mausmakro.lib.exceptions import ConditionException, InterpretException, \
     MausMakroException, RetryException
-from mausmakro.lib.observable import Observable, MessageType
-from mausmakro.lib.types import Conditional, Instruction, Command, Stack
+from mausmakro.lib.observable import MessageType, Observable
+from mausmakro.lib.types import Command, Conditional, Instruction, Stack
 
 
 class Interpreter(Observable):
-
     _call_stack: Stack
     _cont_flag = Event()
     _exit_flag = Event()
@@ -72,15 +71,21 @@ class Interpreter(Observable):
                     break
 
                 self.notify(MessageType.MESSAGE, "Command execution failed")
-                if self.opts['enable_retry'] \
-                   and retries <= self.opts['retry_times']:
-                    self.notify(MessageType.MESSAGE,
-                                "Command retry enabled, retrying command...")
+                if (
+                        self.opts['enable_retry']
+                        and retries <= self.opts['retry_times']
+                ):
+                    self.notify(
+                        MessageType.MESSAGE,
+                        "Command retry enabled, retrying command..."
+                    )
                     self._retry_instruction(instr)
 
                 elif self.opts['pause_on_fail']:
-                    self.notify(MessageType.MESSAGE,
-                                "Pause on fail option enabled.")
+                    self.notify(
+                        MessageType.MESSAGE,
+                        "Pause on fail option enabled."
+                    )
                     self._cont_flag.clear()
 
                 else:
@@ -214,7 +219,7 @@ class Interpreter(Observable):
     @staticmethod
     def _fix_coords(coords: Tuple[int, int]) -> Tuple[int, int]:
         if sys.platform == 'darwin':
-            return int(coords[0]/2), int(coords[1]/2)
+            return int(coords[0] / 2), int(coords[1] / 2)
 
         return coords
 

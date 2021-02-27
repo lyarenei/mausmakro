@@ -54,7 +54,6 @@ def show_coords():
 def interpret(file: str, macro: str, times: int, enable_retry: bool,
               retry_times: int, color_match: bool, match_step: int,
               pause_on_fail: bool):
-
     opts = {
         'color_match': color_match,
         'enable_retry': enable_retry,

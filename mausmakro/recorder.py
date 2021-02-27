@@ -7,7 +7,6 @@ from pynput.mouse import Listener
 
 
 class Recorder:
-
     _filename: str
     _listener: Listener
     _output: TextIO

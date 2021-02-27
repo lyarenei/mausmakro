@@ -6,7 +6,6 @@ from pynput.mouse import Listener
 
 
 class ShowCoords:
-
     _listener: Listener
     _output: TextIO
 

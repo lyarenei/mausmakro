@@ -1,5 +1,4 @@
 class MausMakroException(Exception):
-
     msg: str
 
     def __init__(self, msg: str):

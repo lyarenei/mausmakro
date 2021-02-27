@@ -13,7 +13,6 @@ from mausmakro.lib.types import Instruction
 
 
 class Ui(Observer):
-
     _kb_listener: keyboard.Listener
 
     def __init__(self):

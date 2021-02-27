@@ -4,7 +4,6 @@ from mausmakro.lib.exceptions import ParserException, PreprocessorException
 
 
 class Preprocessor:
-
     _content: str
     _source_path: str
 
