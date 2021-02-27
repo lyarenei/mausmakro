@@ -40,11 +40,11 @@ class Interpreter(Observable):
 
     def toggle_execution(self):
         if self._cont_flag.is_set():
-            self.notify(MessageType.MESSAGE, "Execution paused...")
+            self.notify_msg("Execution paused...")
             self._cont_flag.clear()
 
         else:
-            self.notify(MessageType.MESSAGE, "Resuming execution...")
+            self.notify_msg("Resuming execution...")
             sleep(1)
             self._cont_flag.set()
 
@@ -70,22 +70,18 @@ class Interpreter(Observable):
                 if self._exit_flag.is_set():
                     break
 
-                self.notify(MessageType.MESSAGE, "Command execution failed")
+                self.notify_msg("Command execution failed")
                 if (
                         self.opts['enable_retry']
                         and retries <= self.opts['retry_times']
                 ):
-                    self.notify(
-                        MessageType.MESSAGE,
+                    self.notify_msg(
                         "Command retry enabled, retrying command..."
                     )
                     self._retry_instruction(instr)
 
                 elif self.opts['pause_on_fail']:
-                    self.notify(
-                        MessageType.MESSAGE,
-                        "Pause on fail option enabled."
-                    )
+                    self.notify_msg("Pause on fail option enabled.")
                     self._cont_flag.clear()
 
                 else:
@@ -104,7 +100,7 @@ class Interpreter(Observable):
             if self._exit_flag.is_set():
                 return
 
-            print(f"Retries: {retries}/{self.opts['retry_times']}")
+            self.notify_msg(f"Retries: {retries}/{self.opts['retry_times']}")
 
             try:
                 self._execute_instruction(instr)
@@ -125,7 +121,7 @@ class Interpreter(Observable):
 
     def _execute_command(self, command: Command) -> Optional[bool]:
         if command.opcode == Opcode.CALL:
-            print(f"Call {command.arg}")
+            self.notify_msg(f"Call {command.arg}")
             self._call_stack.push(self._program_counter)
             index = self._label_table[command.arg]
             self._program_counter = index
@@ -137,7 +133,7 @@ class Interpreter(Observable):
             return self._do_click(command.arg, is_double=True)
 
         elif command.opcode == Opcode.EXIT:
-            print("Exiting...")
+            self.notify_msg("Exiting...")
             sys.exit(0)
 
         elif command.opcode == Opcode.FIND:
@@ -149,7 +145,7 @@ class Interpreter(Observable):
             )
 
         elif command.opcode == Opcode.JUMP:
-            print(f"Jump to {command.arg}")
+            self.notify_msg(f"Jump to {command.arg}")
             index = self._label_table[command.arg]
             self._program_counter = index
 
@@ -174,7 +170,7 @@ class Interpreter(Observable):
             self._program_counter = index
 
         elif command.opcode == Opcode.WAIT:
-            print(f"Waiting {command.arg} seconds")
+            self.notify_msg(f"Waiting {command.arg} seconds")
             sleep(command.arg)
 
         else:
@@ -206,7 +202,7 @@ class Interpreter(Observable):
         clicks = 2 if is_double else 1
 
         if isinstance(args[0], int):
-            print(f"Click at {args[0]},{args[1]}")
+            self.notify_msg(f"Clicking at {args[0]},{args[1]}")
             pyautogui.click(x=args[0], y=args[1], clicks=clicks)
             return
 
@@ -242,7 +238,8 @@ class Interpreter(Observable):
             abs_path = Path(self.opts['file']).parent
             img_path = abs_path.joinpath(Path(f'images/{image}'))
 
-        print(f"Finding image .. {image}")
+        self.notify_msg(f"Finding image .. {image}")
+
         try:
             coords = pyautogui.locateCenterOnScreen(
                 str(img_path),
@@ -250,7 +247,8 @@ class Interpreter(Observable):
                 step=match_step,
                 minSearchTime=timeout
             )
-            print("Image found")
+
+            self.notify_msg("Image found")
             return self._fix_coords(coords)
 
         except pyautogui.ImageNotFoundException:
