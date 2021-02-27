@@ -40,13 +40,18 @@ class Interpreter(Observable):
 
     def toggle_execution(self):
         if self._cont_flag.is_set():
-            self.notify_msg("Execution paused...")
-            self._cont_flag.clear()
-
+            self.pause_execution()
         else:
-            self.notify_msg("Resuming execution...")
-            sleep(1)
-            self._cont_flag.set()
+            self.resume_execution()
+
+    def pause_execution(self):
+        self.notify_msg("Execution paused. Press Ctrl to continue.")
+        self._cont_flag.clear()
+
+    def resume_execution(self):
+        self.notify_msg("Resuming execution...")
+        sleep(1)
+        self._cont_flag.set()
 
     def interpret(self, macro: str):
         self._cont_flag.set()
@@ -82,7 +87,7 @@ class Interpreter(Observable):
 
                 elif self.opts['pause_on_fail']:
                     self.notify_msg("Pause on fail option enabled.")
-                    self._cont_flag.clear()
+                    self.pause_execution()
 
                 else:
                     self.notify(MessageType.MAUSMAKRO_EXCEPTION, str(e))
@@ -153,7 +158,7 @@ class Interpreter(Observable):
             return
 
         elif command.opcode == Opcode.PAUSE:
-            self._cont_flag.clear()
+            self.pause_execution()
 
         elif command.opcode == Opcode.PCLICK:
             self._do_click(command.arg, precise=True)
