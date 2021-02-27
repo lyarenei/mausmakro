@@ -1,13 +1,17 @@
 import signal
 import sys
 from datetime import datetime
-from typing import Optional, TextIO
+from typing import List, Optional, TextIO
 
 from pynput.mouse import Listener
+
+from mausmakro.lib.enums import Opcode
+from mausmakro.lib.types import Command, Instruction
 
 
 class Recorder:
     _filename: str
+    _instructions: List[Instruction]
     _listener: Listener
     _output: TextIO
     _start_time: datetime
@@ -15,6 +19,7 @@ class Recorder:
 
     def __init__(self, filename: str):
         self._filename = filename
+        self._instructions = []
         self._listener = Listener(on_click=self._on_click)
         signal.signal(signal.SIGINT, self._signal_handler)
 
@@ -24,16 +29,38 @@ class Recorder:
         else:
             self._output = sys.stdout
 
-        self._write("MACRO macro_name {")
-
     def record(self):
+        print("Recording started. Press Ctrl+C to stop.\n"
+              "The macro will be available as soon as the recording stops.")
         with self._listener:
             self._listener.join()
 
-    def _signal_handler(self, sig, frame):
-        print('Exiting...')
-        self._listener.stop()
+    def print_instructions(self):
+        self._write("MACRO macro_name {")
+
+        for i in self._instructions:
+            if isinstance(i, Command):
+                self.print_command(i)
+
         self._write("}")
+
+    def print_command(self, cmd: Command):
+        data = None
+        indent = '    '
+
+        if cmd.opcode == Opcode.CLICK:
+            args = map(str, cmd.arg)
+            data = f"CLICK {', '.join(args)}"
+
+        elif cmd.opcode == Opcode.WAIT:
+            data = f"WAIT {cmd.arg}s"
+
+        self._write(f'{indent}{data}')
+
+    def _signal_handler(self, sig, frame):
+        print("\nRecording stopped, here is your macro:\n")
+        self._listener.stop()
+        self.print_instructions()
         self._output.close()
 
     def _write(self, data: str):
@@ -51,16 +78,16 @@ class Recorder:
         x = int(x)
         y = int(y)
 
-        if self._get_second_delta() is not None \
-                and self._get_second_delta() > 0:
-            if self._filename:
-                print(f"Wait {self._get_second_delta()} seconds")
-
-            self._write(f"    WAIT {self._get_second_delta()}s")
+        if (
+                self._get_second_delta() is not None
+                and self._get_second_delta() > 0
+        ):
+            self._write(f"Waited {self._get_second_delta()} seconds")
+            cmd = Command(Opcode.WAIT, self._get_second_delta())
+            self._instructions.append(cmd)
 
         if pressed:
-            if self._filename:
-                print(f"Mouse clicked at ({x}, {y})")
-
-            self._write(f"    CLICK {x},{y}")
+            self._write(f"Mouse clicked at ({x}, {y})")
+            cmd = Command(Opcode.CLICK, (x, y))
+            self._instructions.append(cmd)
             self._start_time = datetime.now()
