@@ -1,0 +1,63 @@
+# This is an example macro source file.
+# This macro won't work out of the box, due to missing images.
+
+# This is a procedure.
+# A procedure is basically an alias for a set of instructions.
+# and can be called repeatedly. It's main purpose is to improve code readability
+# and allow code reusability.
+PROC select_thing {
+
+    # Note when using relative paths, you need to place the images
+    # into 'images' subdirectory next to this macro file.
+    CLICK ON common/foo.png WITHIN 10s
+    CLICK ON common/bar.png WITHIN 5m
+}
+
+# You can also use absolute paths for the images
+# which allows you to place them wherever you want.
+PROC close_button {
+    CLICK ON /path/to/close_button.png WITHIN 4s
+}
+
+# You have probably noticed by now, that comments are marked with a '#'.
+
+# This is a macro, which can be interpreted with mausmakro.
+MACRO automate {
+    CLICK ON common/baz.png WITHIN 3s
+    WAIT 2m
+    CALL select_thing
+}
+
+# You can have as many macros and procedures in a single file.
+MACRO automate_other {
+    CLICK ON common/other_thing.png WITHIN 7s
+    WAIT 1s
+
+    # Note that I can call the procedure as in the first macro
+    # as many times as I want.
+    CALL select_thing
+    CALL close_button
+    CALL select_thing
+
+    # I can also add a RETURN command to MACRO to make it callable
+    # the same way as procedures. But now this macro can no longer be
+    # used as a macro. Yes, procedures are just macros with an implicit RETURN.
+    RETURN
+}
+
+# Let's find a chonker on our screen.
+# But what if we don't find him fast enough?
+# Well, in any case, we will close the picture, we don't like obese cats.
+MACRO close_chonk {
+    IF FIND animals/chonker.png WITHIN 2s {
+        CALL close_button
+        WAIT 2s
+    } ELSE {
+
+        # Note that I'm calling the macro defined above
+        # as if it would be a procedure.
+        CALL automate_other
+    }
+
+    CLICK 69,420
+}
