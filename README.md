@@ -1,4 +1,4 @@
-# mausmakro
+# Mausmakro
 Mausmakro is a mouse macro player for automating various time-consuming and repeating tasks
 on your computer.
 
@@ -39,7 +39,7 @@ Mausmakro is fairly straightforward to use, it takes a file with macros as an in
 At this moment, Mausmakro can be installed from test pip instance: `pip install -i https://test.pypi.org/simple/ mausmakro`
 Alternatively, you can clone this repository and install it locally: `pip install .`
 
-There are three modes available, record, show-coords and interpret.
+There are four modes available, check, record, show-coords and interpret.
 An example for interpreting a macro can be `python -m mausmakro interpret -f foobar.mkr -m save_me`
 Which will interpret macro named `save_me` in file `foobar.mkr` in an infinite loop.
 To see other options, use `--help` parameter.
@@ -48,7 +48,7 @@ To see other options, use `--help` parameter.
 ### Writing macros
 Writing macros is pretty easy, albeit a bit time-consuming, especially if you are writing
 a more complex one. If you are more of a technical person, who knows what EBNF is, you can
-follow the EBNF [here](doc/ebnf.md). Otherwise, there are a few rules:
+read the EBNF [here](doc/ebnf.md). Otherwise, there are a few rules:
 - The input file must contain at least one macro
 - Every code body (macro, procedure, if/else) begins with `{` and ends with `}`
 - A Macro/procedure always requires a unique label
@@ -56,7 +56,8 @@ follow the EBNF [here](doc/ebnf.md). Otherwise, there are a few rules:
 - Macros/procedures cannot be nested
 - IF statement may have an ELSE branch
 
-All available commands are described [here](doc/commands.md)
+All available commands are described [here](doc/commands.md).
+You can also look for an example [here](examples/simple.mkr).
 
 
 ## Development
