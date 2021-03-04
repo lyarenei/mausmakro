@@ -44,6 +44,13 @@ An example for interpreting a macro can be `python -m mausmakro interpret -f foo
 Which will interpret macro named `save_me` in file `foobar.mkr` in an infinite loop.
 To see other options, use `--help` parameter.
 
+The mausmakro execution can be paused by specific instruction or manually with left `Ctrl` key.
+To resume execution, press the left `Ctrl` key again. 
+The `Ctrl` key is detected independently on which window is active, allowing pausing quickly if necessary. 
+This functionality is only available in the `interpret` mode.
+
+To exit, in any mode, use the standard `Ctrl+C` keyboard shortcut. 
+
 
 ### Writing macros
 Writing macros is pretty easy, albeit a bit time-consuming, especially if you are writing
