@@ -29,6 +29,27 @@ def show_coords():
     show.start()
 
 
+@main.command(help="Check specified file and exit.")
+@click.option('--file', '-f', help="Source file with macros")
+@click.option('--full', is_flag=True,
+              help="Extend check to images existence and "
+                   "all called labels are defined")
+def check(**kwargs):
+    try:
+        file_content = Preprocessor(kwargs.get('file')).process()
+        parser = Parser(kwargs.get('file'), file_content)
+        parser.parse()
+
+        if kwargs.get('full'):
+            parser.perform_checks()
+
+        print("No errors found.")
+
+    except Exception as e:
+        print(f"An error occurred while parsing the file:\n{e}")
+        sys.exit(1)
+
+
 @main.command()
 @click.option('--file', '-f', help="Source file with macros")
 @click.option('--macro', '-m', help="Name of the macro to interpret")
