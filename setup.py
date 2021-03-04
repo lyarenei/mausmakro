@@ -8,7 +8,7 @@ setuptools.setup(
     author='Dominik Krivohlavek',
     author_email='domkrivohlavek@gmail.com',
     license='None',
-    packages=setuptools.find_packages(),
+    packages=setuptools.find_packages(exclude=['tests', 'examples', 'doc']),
     install_requires=[
         'lark',
         'pyautogui',
