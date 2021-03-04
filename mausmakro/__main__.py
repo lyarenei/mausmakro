@@ -15,7 +15,7 @@ def main():
     pass
 
 
-@main.command()
+@main.command(help="Record your actions and generate macro at the end.")
 @click.option('--output', '-o', default=None,
               help="Output file")
 def record(output):
@@ -23,7 +23,7 @@ def record(output):
     rec.record()
 
 
-@main.command()
+@main.command(help="Show mouse coords on every click.")
 def show_coords():
     show = ShowCoords()
     show.start()
@@ -50,7 +50,7 @@ def check(**kwargs):
         sys.exit(1)
 
 
-@main.command()
+@main.command(help="Interpret specified macro in a file.")
 @click.option('--file', '-f', help="Source file with macros")
 @click.option('--macro', '-m', help="Name of the macro to interpret")
 @click.option('--times', '-t', type=int, default=-1,
