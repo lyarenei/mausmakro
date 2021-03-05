@@ -39,6 +39,11 @@ Mausmakro is fairly straightforward to use, it takes a file with macros as an in
 At this moment, Mausmakro can be installed from test pip instance: `pip install -i https://test.pypi.org/simple/ mausmakro`
 Alternatively, you can clone this repository and install it locally: `pip install .`
 
+If you are on macOS, you also need to give following permissions to your terminal:
+- Screen recording
+- Input monitoring
+- Accessibility
+
 There are four modes available, check, record, show-coords and interpret.
 An example for interpreting a macro can be `python -m mausmakro interpret -f foobar.mkr -m save_me`
 Which will interpret macro named `save_me` in file `foobar.mkr` in an infinite loop.
