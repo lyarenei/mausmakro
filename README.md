@@ -47,7 +47,7 @@ If you are on macOS, you also need to give following permissions to your termina
 There are four modes available, check, record, show-coords and interpret.
 An example for interpreting a macro can be `python -m mausmakro interpret -f foobar.mkr -m save_me`
 Which will interpret macro named `save_me` in file `foobar.mkr` in an infinite loop.
-To see other options, use `--help` parameter.
+To see other options, use `--help` parameter or check the [manual](doc/manual.md).
 
 The mausmakro execution can be paused by specific instruction or manually with left `Ctrl` key.
 To resume execution, press the left `Ctrl` key again. 
