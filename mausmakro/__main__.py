@@ -57,8 +57,7 @@ def check(**kwargs):
               help="Number of times to repeat specified macro, "
                    "defaults to -1 (infinite)")
 @click.option('--enable-retry', is_flag=True,
-              help="Enable command retrying before going back "
-                   "(with --go-back-on-fail) or failing completely.")
+              help="Enable command retrying before failing completely.")
 @click.option('--retry-times', type=click.IntRange(1, None), default=1,
               help="Retry the failing command specified times before failing. "
                    "Defaults to 1. Has no effect if --retry-times command "
