@@ -55,7 +55,7 @@ def check(**kwargs):
 @click.option('--macro', '-m', help="Name of the macro to interpret")
 @click.option('--times', '-t', type=int, default=-1,
               help="Number of times to repeat specified macro, "
-                   "defaults to -1 (infinite")
+                   "defaults to -1 (infinite)")
 @click.option('--enable-retry', is_flag=True,
               help="Enable command retrying before going back "
                    "(with --go-back-on-fail) or failing completely.")
