@@ -8,13 +8,11 @@ ebnf = r"""
 %import common.WS
 
 %ignore /#[^\n]*/
-%ignore INDENT
 %ignore NEWLINE
 %ignore WS
 
 FILENAME                       : /[\w\-_\/]+/
 EXTENSION                      : "jpeg" | "jpg" | "png"
-INDENT                         : /\t| {4}| {2}/
 """ + f"""
 {ArgType.NAME.name}            : (LETTER | "_" | "-" | DIGIT)+
 {ArgType.FILE.name}            : FILENAME "." EXTENSION

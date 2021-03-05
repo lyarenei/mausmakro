@@ -14,12 +14,10 @@ are used as well.
 %import common.NEWLINE
 %import common.WS
 %ignore /#[^\n]*/
-%ignore INDENT
 %ignore NEWLINE
 %ignore WS
 FILENAME                       : /[\w\-_\/]+/
 EXTENSION                      : "jpeg" | "jpg" | "png"
-INDENT                         : /\t| {4}| {2}/
 NAME            : (LETTER | "_" | "-" | DIGIT)+
 FILE            : FILENAME "." EXTENSION
 COORDS          : INT WS* "," WS* INT
