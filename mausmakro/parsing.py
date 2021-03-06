@@ -10,7 +10,7 @@ from mausmakro.lib.enums import ArgType, Opcode
 from mausmakro.lib.exceptions import ImageException, LabelException, \
     MausMakroException, ParserException
 from mausmakro.lib.types import Command, Conditional, Instruction
-from preprocessor import Preprocessor
+from mausmakro.preprocessor import Preprocessor
 
 
 class Parser:
