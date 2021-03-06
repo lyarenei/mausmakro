@@ -2,11 +2,9 @@ import unittest
 from unittest.mock import patch
 
 from mausmakro.lib.enums import Opcode
-from mausmakro.lib.exceptions import LabelException, ParserException, \
-    PreprocessorException
+from mausmakro.lib.exceptions import LabelException, ParserException
 from mausmakro.lib.types import Command, Conditional
 from mausmakro.parsing import Parser
-from mausmakro.preprocessor import Preprocessor
 
 
 # noinspection PyUnresolvedReferences
@@ -117,11 +115,6 @@ class TestParser(unittest.TestCase):
 
         self.assertListEqual(ins, expected_ins)
         self.assertDictEqual(labels, expected_labels)
-
-    def test_import_statement_invalid(self):
-        filename = 'test_macros/import_statement_invalid.txt'
-        preprocessor = Preprocessor(filename)
-        self.assertRaises(PreprocessorException, preprocessor.process)
 
     def test_indents_newlines(self):
         filename = 'test_macros/indents_newlines.txt'
