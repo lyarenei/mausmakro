@@ -10,6 +10,7 @@ from mausmakro.lib.enums import ArgType, Opcode
 from mausmakro.lib.exceptions import ImageException, LabelException, \
     MausMakroException, ParserException
 from mausmakro.lib.types import Command, Conditional, Instruction
+from preprocessor import Preprocessor
 
 
 class Parser:
@@ -23,15 +24,16 @@ class Parser:
     label_table: Dict[str, int]
     macro_defined = False
 
-    def __init__(self, path: str, source: str):
-
+    def __init__(self, path: str):
         self._defined_labels = []
         self._called_labels = []
         self._images_to_check = []
         self._source_path = path
 
         lark = Lark(ebnf, parser='lalr')
+        preprocessor = Preprocessor(path)
         try:
+            source = preprocessor.process(path)
             self._tree = lark.parse(source)
 
         except UnexpectedToken as e:

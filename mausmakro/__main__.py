@@ -4,7 +4,6 @@ import sys
 import click
 
 from mausmakro.parsing import Parser
-from mausmakro.preprocessor import Preprocessor
 from mausmakro.recorder import Recorder
 from mausmakro.show_coords import ShowCoords
 from mausmakro.ui import Ui
@@ -36,8 +35,7 @@ def show_coords():
                    "all called labels are defined")
 def check(**kwargs):
     try:
-        file_content = Preprocessor(kwargs.get('file')).process()
-        parser = Parser(kwargs.get('file'), file_content)
+        parser = Parser(kwargs.get('file'))
         parser.parse()
 
         if kwargs.get('full'):
@@ -84,8 +82,7 @@ def interpret(file: str, macro: str, times: int, enable_retry: bool,
     }
 
     try:
-        file_content = Preprocessor(file).process()
-        parser = Parser(file, file_content)
+        parser = Parser(file)
         instructions, label_table = parser.parse()
         parser.perform_checks()
         parser.macro_exists(macro)

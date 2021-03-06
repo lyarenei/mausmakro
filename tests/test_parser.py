@@ -23,8 +23,7 @@ class TestParser(unittest.TestCase):
 
     def test_comments(self):
         filename = 'test_macros/comments.txt'
-        file_content = Preprocessor(filename).process()
-        ins, labels = Parser(filename, file_content).parse()
+        ins, labels = Parser(filename).parse()
 
         expected_labels = {'foobar': 0}
         expected_ins = [
@@ -39,8 +38,7 @@ class TestParser(unittest.TestCase):
     @patch.object(Parser, '_generate_label', mock_generate_label)
     def test_conditional(self):
         filename = 'test_macros/conditional.txt'
-        file_content = Preprocessor(filename).process()
-        ins, labels = Parser(filename, file_content).parse()
+        ins, labels = Parser(filename).parse()
 
         cond = Conditional(Opcode.IF)
         cond.condition = Command(Opcode.FIND, ('image.png', 5))
@@ -62,8 +60,7 @@ class TestParser(unittest.TestCase):
     @patch.object(Parser, '_generate_label', mock_generate_label)
     def test_conditional_else(self):
         filename = 'test_macros/conditional_else.txt'
-        file_content = Preprocessor(filename).process()
-        ins, labels = Parser(filename, file_content).parse()
+        ins, labels = Parser(filename).parse()
 
         cond = Conditional(Opcode.IF)
         cond.condition = Command(Opcode.FIND, ('image.png', 5))
@@ -87,30 +84,25 @@ class TestParser(unittest.TestCase):
 
     def test_duplicate_label(self):
         filename = 'test_macros/duplicate_label.txt'
-        file_content = Preprocessor(filename).process()
-        parser = Parser(filename, file_content)
+        parser = Parser(filename)
         self.assertRaises(ParserException, parser.parse)
 
     def test_duplicate_macro(self):
         filename = 'test_macros/duplicate_macros.txt'
-        file_content = Preprocessor(filename).process()
-        parser = Parser(filename, file_content)
+        parser = Parser(filename)
         self.assertRaises(ParserException, parser.parse)
 
     def test_empty(self):
         filename = 'test_macros/empty.txt'
-        file_content = Preprocessor(filename).process()
-        self.assertRaises(ParserException, Parser, filename, file_content)
+        self.assertRaises(ParserException, Parser, filename)
 
     def test_empty_macro(self):
         filename = 'test_macros/empty_macro.txt'
-        file_content = Preprocessor(filename).process()
-        self.assertRaises(ParserException, Parser, filename, file_content)
+        self.assertRaises(ParserException, Parser, filename)
 
     def test_import_statement(self):
         filename = 'test_macros/import_statement.txt'
-        file_content = Preprocessor(filename).process()
-        ins, labels = Parser(filename, file_content).parse()
+        ins, labels = Parser(filename).parse()
 
         expected_labels = {'foobar': 0, 'foobaz': 4}
         expected_ins = [
@@ -133,8 +125,7 @@ class TestParser(unittest.TestCase):
 
     def test_indents_newlines(self):
         filename = 'test_macros/indents_newlines.txt'
-        file_content = Preprocessor(filename).process()
-        ins, labels = Parser(filename, file_content).parse()
+        ins, labels = Parser(filename).parse()
 
         expected_labels = {'foobar': 0}
         expected_ins = [
@@ -149,13 +140,11 @@ class TestParser(unittest.TestCase):
 
     def test_invalid_name(self):
         filename = 'test_macros/invalid_name.txt'
-        file_content = Preprocessor(filename).process()
-        self.assertRaises(ParserException, Parser, filename, file_content)
+        self.assertRaises(ParserException, Parser, filename)
 
     def test_procedure(self):
         filename = 'test_macros/procedure.txt'
-        file_content = Preprocessor(filename).process()
-        ins, labels = Parser(filename, file_content).parse()
+        ins, labels = Parser(filename).parse()
 
         expected_labels = {'foo': 0}
         expected_ins = [
@@ -169,8 +158,7 @@ class TestParser(unittest.TestCase):
 
     def test_valid_name(self):
         filename = 'test_macros/valid_name.txt'
-        file_content = Preprocessor(filename).process()
-        ins, labels = Parser(filename, file_content).parse()
+        ins, labels = Parser(filename).parse()
 
         expected_labels = {'fO0-bA_r': 0}
         expected_ins = [
@@ -184,7 +172,6 @@ class TestParser(unittest.TestCase):
 
     def test_undefined_label(self):
         filename = 'test_macros/undefined_label.txt'
-        file_content = Preprocessor(filename).process()
-        parser = Parser(filename, file_content)
+        parser = Parser(filename)
         parser.parse()
         self.assertRaises(LabelException, parser.perform_checks)
