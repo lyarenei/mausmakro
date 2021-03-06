@@ -69,16 +69,17 @@ def check(**kwargs):
 @click.option('--pause-on-fail', is_flag=True,
               help="Pause execution if current instruction fails, "
                    "instead of exiting.")
-def interpret(file: str, macro: str, times: int, enable_retry: bool,
-              retry_times: int, color_match: bool, match_step: int,
-              pause_on_fail: bool):
+def interpret(**kwargs):
+    file = kwargs.get('file')
+    macro = kwargs.get('macro')
+    times = kwargs.get('times')
     opts = {
-        'color_match': color_match,
-        'enable_retry': enable_retry,
+        'color_match': kwargs.get('color_match'),
+        'enable_retry': kwargs.get('enable_retry'),
         'file': file,
-        'match_step': match_step,
-        'retry_times': retry_times,
-        'pause_on_fail': pause_on_fail
+        'match_step': kwargs.get('match_step'),
+        'retry_times': kwargs.get('retry_times'),
+        'pause_on_fail': kwargs.get('pause_on_fail')
     }
 
     try:
