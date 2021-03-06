@@ -48,9 +48,9 @@ def check(**kwargs):
         sys.exit(1)
 
 
-@main.command(help="Interpret specified macro in a file.")
-@click.option('--file', '-f', help="Source file with macros")
-@click.option('--macro', '-m', help="Name of the macro to interpret")
+@main.command()
+@click.argument('file', type=click.Path(exists=True))
+@click.argument('macro', type=str)
 @click.option('--times', '-t', type=int, default=-1,
               help="Number of times to repeat specified macro, "
                    "defaults to -1 (infinite)")
@@ -70,6 +70,13 @@ def check(**kwargs):
               help="Pause execution if current instruction fails, "
                    "instead of exiting.")
 def interpret(**kwargs):
+    """Interpret the MACRO in a FILE.
+
+    FILE is the path of the file containing the MACRO.
+
+    MACRO is the name of a macro to be interpreted.
+    """
+
     file = kwargs.get('file')
     macro = kwargs.get('macro')
     times = kwargs.get('times')

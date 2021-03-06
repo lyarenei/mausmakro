@@ -2,7 +2,7 @@ import setuptools
 
 setuptools.setup(
     name='mausmakro',
-    version='0.2.0',
+    version='0.2.1',
     description='Mouse macro player for automating various tasks.',
     url='https://github.com/lyarenei/mausmakro',
     author='Dominik Krivohlavek',

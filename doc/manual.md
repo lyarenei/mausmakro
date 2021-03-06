@@ -7,10 +7,10 @@ following sections.
 
 The main mode. Interpret the specified macro from a file.
 
-- `--file`, `-f` <file>
+- First positional argument: FILE
     - The macro source file in which is the macro to be interpreted.
 
-- `--macro`, `-m` <name>
+- Second positional argument: MACRO
     - The name of the macro to be interpreted.
 
 - `--times`, `-t` <times>
