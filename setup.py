@@ -7,7 +7,7 @@ setuptools.setup(
     url='https://github.com/lyarenei/mausmakro',
     author='Dominik Krivohlavek',
     author_email='domkrivohlavek@gmail.com',
-    license='None',
+    license='License :: OSI Approved :: MIT License',
     packages=setuptools.find_packages(exclude=['tests', 'examples', 'doc']),
     install_requires=[
         'lark',
