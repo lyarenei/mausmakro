@@ -17,7 +17,7 @@ setuptools.setup(
         'Pillow',
         'opencv-python',
     ],
-    python_requires=">=3.7",
+    python_requires=">=3.6",
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Intended Audience :: End Users/Desktop',
@@ -25,6 +25,7 @@ setuptools.setup(
         'Operating System :: POSIX :: Linux',
         'Operating System :: MacOS',
         'Operating System :: Microsoft :: Windows',
+        'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
